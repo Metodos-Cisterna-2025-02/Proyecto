@@ -1,0 +1,14 @@
+name: Compile
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04 # Run compilation jobs on Ubuntu 22.04 LTS (target OS)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Checkout the repository
+
+      - name: Compile code
+        run: make
