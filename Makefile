@@ -13,7 +13,7 @@ $(TARGET): $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(OBJ_FILES) -o $@
 
 %.o: %.c
-    $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJ_FILES) $(TARGET)
