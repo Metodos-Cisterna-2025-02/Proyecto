@@ -1,10 +1,15 @@
 name: Compile
 
-on: [push, pull_request]
+# Run job on pushes to main branch or pull requests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # Run compilation jobs on Ubuntu 22.04 LTS (target OS)
+    runs-on: ubuntu-24.04 # Run compilation jobs on Ubuntu 24.04 LTS (target OS)
 
     steps:
       - name: Checkout code
