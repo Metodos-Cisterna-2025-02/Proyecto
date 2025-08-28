@@ -10,10 +10,10 @@ TARGET = proyecto
 all: $(TARGET)
 
 $(TARGET): $(OBJ_FILES)
-    $(CC) $(CFLAGS) $(OBJ_FILES) -o $@
+	$(CC) $(CFLAGS) $(OBJ_FILES) -o $@
 
 %.o: %.c
     $(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-    rm -f $(OBJ_FILES) $(TARGET)
+	rm -f $(OBJ_FILES) $(TARGET)
