@@ -3,9 +3,9 @@ name: Compile
 # Run job on pushes to main branch or pull requests
 on:
   push:
-    branches: [ main ]
+    branches: [ "*" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "*" ]
 
 jobs:
   build:

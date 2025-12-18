@@ -1,19 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -g
 
-# Find all .c files recursively
-SRC_FILES := $(shell find . -name "*.c")
-OBJ_FILES := $(patsubst %.c,%.o,$(SRC_FILES))
+# Find all .c files containing main()
+MAINSRC := $(shell grep -l 'int main' $(shell find src/ -name '*.c'))
+MAINEXE := $(MAINSRC:%.c=%)
 
-TARGET = proyecto
+all: $(MAINEXE)
 
-all: $(TARGET)
-
-$(TARGET): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(OBJ_FILES) -o $@
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+%: %.c
+	$(CC) $(CFLAGS) "$<" -o "$@" -lm
 
 clean:
-	rm -f $(OBJ_FILES) $(TARGET)
+	rm -f $(MAINEXE)
