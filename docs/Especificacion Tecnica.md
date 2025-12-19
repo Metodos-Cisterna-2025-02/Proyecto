@@ -1,44 +1,14 @@
 ## Escenarios
-Se propone almacenar a los escenarios como una matriz 16x16 de structs para cada modulo
+Se propone almacenar a los escenarios como una matriz de ints, almacenando la altura para cada modulo
 ```c
-typedef struct {
-    int tipo;
-    int altura;
-    int objeto;
-} Modulo
-
-Modulo* escenario[16];
-
-escenario[i][16];
-
-escenario[i][j] = Modulo
-```
-Alternativamente, se puede crear un mapa basado en punteros entre structs
-```c
-typedef struct {
-    int tipo;
-    int altura;
-    struct* personaje;
-
-    struct* arriba;
-    struct* abajo;
-    struct* izquierda;
-    struct* derecha;
-} Modulo
+int* Escenario[8];
+[[0, 1, 2, 4, 1, 5, 0, 3],
+ [1, 2, 3, 5, 4, 0, 0, 1], ...]
 ```
 
-Ademas, cada Modulo tiene tres valores:
-### Tipo
-Cada Modulo tiene asignado un numero correspondiente al tipo de espacio que es
-1. (0) Espacio normal
-2. (1) Espacio de partida. Un jugador aparece aqui. Existen solo dos espacios de partida.
-3. (2) Espacio objetivo. Este es el objetivo donde deben llegar los jugadores
-
+Cada espacio Escenario[x][y] representa la altura del modulo en la coordenada (x, y)
 ### Altura
 Cada Modulo tiene una altura asociada. Los jugadores solo pueden moverse a un espacio si tienen un maximo de 2 metros de diferencia entre el espacio en el que se encuentran y el espacio al que desean moverse. La altura maxima es de 5 metros.
-
-### Personaje
-Cada Espacio podra alojar a un personaje como maximo, con un puntero al struct del personaje. Mas informacion en la seccion sobre los personajes.
 
 ## Limitaciones
 ### Modulos
@@ -57,11 +27,13 @@ Los jugadores solo se podran mover de izquierda a derecha o de arriba a abajo, s
 Considerando las restricciones anteriores, cada jugador debe tener por lo menos un camino valido para llegar desde su punto de partida hasta el punto objectivo del mapa
 
 ## Personajes
-Se propone representar a los personajes como structs que almacenan que personaje es y los dispositivos a su disposicion
+Se propone representar a los personajes como structs que almacenan que personaje es, sus coordenadas, y los dispositivos a su disposicion
 
 ```c
 typedef struct {
     int tipo;
+    int x;
+    int y;
     int dispositivos[3];
 } Personaje
 ```
@@ -70,6 +42,9 @@ typedef struct {
 Cada Personaje tendra un tipo entero que representara si el personaje es Megaman (rockman) o Protoman
 1. (0) Megaman (rockman)
 2. (1) Protoman
+
+### Coordenadas
+Cada Personaje almacenara sus coordenadas en sus valores `Personaje.x` y `Personaje.y` como enteros. La logica del movimiento debera encargarse de mover a los personajes con respecto a sus coordenadas X, Y, y la altura del modulo en el que esta y el modulo al que desea moverse. 
 
 ### Dispositivos
 Cada Personaje tendra una lista de enteros que representan los dispositivos a disposicion de cada jugador. Mas informacion sobre los dispositivos en la seccion dedicada a ellos.
