@@ -1,5 +1,5 @@
-#ifndef INTERFAZ3_H
-#define INTERFAZ3_H
+#ifndef INTERFAZ_H
+#define INTERFAZ_H
 
 
 

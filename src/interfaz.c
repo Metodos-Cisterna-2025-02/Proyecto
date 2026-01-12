@@ -3,7 +3,7 @@
 #include <stdlib.h> // 
 #include <time.h>   // 
 #include <ctype.h>
-#include "interfaz3.h"
+#include "interfaz.h"
 
 
 int realizarsorteocarasello() {
