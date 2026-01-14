@@ -9,7 +9,7 @@
 // estructura dispositivos
 typedef struct {
     char nombre[50];
-    int disponible;
+    int disponible;//disponible = 1 esta disponible, disponible = 0 no esta disponible
     int nivel;
 } dispositivousuario;
 
