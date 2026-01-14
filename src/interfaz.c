@@ -1,124 +1,149 @@
-#include <stdio.h>
-#include <string.h> // 
-#include <stdlib.h> // 
-#include <time.h>   // 
-#include <ctype.h>
 #include "interfaz.h"
 
+void registraraccion(FILE *log, char *actor, char *accion) {
+    if (log == NULL) return;
+    time_t ahora = time(NULL);
+    struct tm *t = localtime(&ahora);
+    fprintf(log, "[%02d:%02d] %s: %s\n", t->tm_hour, t->tm_min, actor, accion);
+    fflush(log);
+}
 
-int realizarsorteocarasello() {
-    int eleccionusuario;
-    int resultadomoneda;
-    int resultadoscan; 
+//pide una opcion entre wasd al usuario
+char pedirmovimiento(FILE *log) {
+    char tecla;
+    int valida = 0;
 
-   
-    srand(time(NULL)); 
+    while (valida == 0) {
+        printf("Moverse (W: arriba, A: izquierda, S: abajo, D: derecha): ");
+        scanf(" %c", &tecla);
 
-    printf("\n----SORTEO CARA O SELLO----\n");
-    printf("Elige una opcion:\n");
-    printf("1. Cara\n");
-    printf("2. Sello\n");
-
-    
-    while (1) {
-        printf("Opcion: ");
-        resultadoscan = scanf("%d", &eleccionusuario);
-
-        if (resultadoscan == 0) {
-            
-            printf("Error: numero no valido.\n");
-            
-            
-            while (getchar() != '\n'); 
-        } 
-        else if (eleccionusuario < 1 || eleccionusuario > 2) {
-            
-            printf("Error:  Elige 1 o 2.\n");
-        } 
-        else {
-            
-            break; 
+        if (tecla == 'w' || tecla == 'W') {
+          
+            registraraccion(log, "Usuario", "Intenta movimiento: arriba");
+            valida = 1;
+        } else if (tecla == 'a' || tecla == 'A') {
+            registraraccion(log, "Usuario", "Intenta movimiento: izquierda");
+            valida = 1;
+        } else if (tecla == 's' || tecla == 'S') {
+            registraraccion(log, "Usuario", "Intenta movimiento: abajo");
+            valida = 1;
+        } else if (tecla == 'd' || tecla == 'D') {
+            registraraccion(log, "Usuario", "Intenta movimiento: derecha");
+            valida = 1;
+        } else {
+            printf("Tecla invalida. Usa W, A, S o D.\n");
         }
     }
-    
-    resultadomoneda = (rand() % 2) + 1;
+    return tecla;// regresa la tecla seleccionada
+}
 
-    
-    if (resultadomoneda == 1) {
-        printf("Resultado Sorteo: CARA\n");
+
+int mostrarmenuturno(FILE *log, int yausodispositivo) {
+    int opcion;// opcion elegida
+    int esvalida = 0; // i es valida ==1
+
+    printf("\n   MENU DE TURNO    \n");
+    printf("1. Moverse\n");
+    if (yausodispositivo == 0) {//si ya intento usar un dispoditivo imprime ya usaste dispositivo
+        printf("2. Usar Dispositivo\n");
     } else {
-        printf("Resultado Sorteo: SELLO\n");
+        printf("2. Ya usaste un dispositivo durante este turno\n");
+    }
+    printf("3. Rendirse\n");
+
+    while (esvalida == 0) {
+        printf("Elige una opcion: ");
+        scanf("%d", &opcion);
+
+        if (opcion == 1) {
+            
+            registraraccion(log, "Usuario", "seleccionó opcion 1: Moverse");
+            esvalida = 1;
+        } else if (opcion == 2 && yausodispositivo == 0) {
+            registraraccion(log, "Usuario", "seleccionó opcion 2: Usar dispositivo");
+            esvalida = 1;
+        } else if (opcion == 3) {
+            registraraccion(log, "Usuario", "seleccionó opcion 3: Rendirse");
+            esvalida = 1;
+        } else {
+            printf("  opcion incorrecta.\n");
+        }
+
+        if (esvalida==0) {
+            while (getchar() != '\n');
+        }
+    }
+    return opcion;//regresa la opcion seleccionada
+}
+
+
+int realizarsorteocarasello(FILE *log) {
+    int eleccion, resultado, escanear;
+
+    printf("\n   SORTEO CARA Y SELLO  \n. 1-Cara\n. 2-Sello\n");
+    while (1) {
+        printf("Selecciona una opcion: ");
+        escanear = scanf("%d", &eleccion);
+        // Si (leyó bien Y es 1) O (leyó bien Y es 2)
+        if ((escanear == 1 && eleccion == 1) || (escanear == 1 && eleccion == 2)) {
+         break;
+        }
+        printf("Invalido. Use 1 o 2.\n");
+        while (getchar() != '\n');
     }
 
-    if (eleccionusuario == resultadomoneda) {
-        printf("Ganaste el sorteo\n");
-        return 1; 
+    resultado = (rand() % 2) + 1;// resultado aleatorio
+    if (resultado == 1) {
+     printf("Resultado: CARA\n");
+    } 
+				else {
+     printf("Resultado: SELLO\n");
+    }
+
+    if (eleccion == resultado) {
+        
+        registraraccion(log, "Sistema", "Usuario gana sorteo");
+        return 1; //retorna 1 si el usuario gano
     } else {
-        printf("Perdiste el sorteo.\n");
-        return 0; 
+        registraraccion(log, "Sistema", "Ia gana sorteo");
+        return 0;//retorna 0 si el usuario perdio
     }
 }
-// devuelve 0 si el usuario perdio
-// devuelve 1 si el ususraiogano
 
-void menuseleccioninicialdispositivos(char dispositivoselegidos[][50]) {
-    int seleccion;
-    int contador = 0;
+//seleciona los 3 dispositivos del jugador
+void seleccionardispositivos(dispositivousuario misdispositivos[], FILE *log) {
+    char catalogo[5][50] = {"Gaius", "Quadratus", "Hydrus", "Phalanx", "Argus"};
+    int usados[5] = {0};
+    int eleccion, contador = 0;
+    char mensaje_log[100];
 
-
-    char nombresdispositivos[5][50] = {
-        "1. Gaius ",
-        "2. Quadratus ",
-        "3. Hydrus ",
-        "4. Phalanx ",
-        "5. Argus )"
-    };
-
-    printf("\n----SELECCION DE DISPOSITIVOS----\n");
-    printf("Debes elegir 3 dispositivos \n");
+    printf("\n    ELIGE  3 DISPOSITIVOS   \n");
 
     while (contador < 3) {
-        printf("\nDisponibles:\n");
-        
         for (int i = 0; i < 5; i++) {
-            printf("%s\n", nombresdispositivos[i]);
+            printf("%d. %s\n", i + 1, catalogo[i]);
         }
 
-        printf("Selecciona el dispositivo #%d: ", contador + 1);
-        int leido = scanf("%d", &seleccion);
+        printf("Dispositivo %d: ", contador + 1);
+        scanf("%d", &eleccion);
 
-     
-        if (leido == 0) {
-            printf("Error: Ingresa el numero de la opcion.\n");
-            while (getchar() != '\n'); 
-            continue;
-        }
+        if (eleccion >= 1 && eleccion <= 5 && usados[eleccion - 1] == 0) {
+            
+            strcpy(misdispositivos[contador].nombre, catalogo[eleccion - 1]);
+            misdispositivos[contador].disponible = 1;
+            misdispositivos[contador].nivel = contador + 1;
+            usados[eleccion - 1] = 1;
 
-       
-        if (seleccion < 1 || seleccion > 5) {
-            printf("Opcion fuera de rango (1-5).\n");
+            
+            strcpy(mensaje_log, "seleccionó ");             
+            strcat(mensaje_log, catalogo[eleccion - 1]);    
+            
+            registraraccion(log, "Usuario", mensaje_log);
+            
+            contador++;
         } else {
-            
-            int indice = seleccion - 1;
-            int duplicado = 0;
-
-            
-            for (int k = 0; k < contador; k++) {
-                if (strcmp(dispositivoselegidos[k], nombresdispositivos[indice]) == 0) {
-                    duplicado = 1;
-                    break;
-                }
-            }
-
-            if (duplicado==1) {
-                printf("Dispositivo ya elegido\n");
-            } else {
-                
-                strcpy(dispositivoselegidos[contador], nombresdispositivos[indice]);
-                contador++;
-                printf("Dispositivo agregado\n");
-            }
+            printf("Error o dispositivo ya elegido.\n");
         }
+        while (getchar() != '\n');
     }
 }
-// se eligen 3 dispositivo
