@@ -227,3 +227,8 @@ void usardispositivo(dispositivousuario *disp, FILE *log) {
         registraraccion(log, "Usuario", mensaje);
     }
 }
+void turnodeia(FILE *log) {
+    printf("\n--- TURNO DE LA IA ---\n");
+    registraraccion(log, "IA", "Realiza su jugada");
+    
+}

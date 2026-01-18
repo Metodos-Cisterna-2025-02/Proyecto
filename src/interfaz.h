@@ -20,4 +20,5 @@ int realizarsorteocarasello(FILE *log);
 void seleccionardispositivos(dispositivousuario misdispositivos[], FILE *log);
 void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad);
 void usardispositivo(dispositivousuario *disp, FILE *log);
+void turnodeia(FILE *log);
 #endif
