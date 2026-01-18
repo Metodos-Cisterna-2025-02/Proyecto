@@ -3,6 +3,11 @@
 
 #define HASHSIZE 101
 
+static struct nlist* hashtable[HASHSIZE];
+static void hash_clear();
+static unsigned hash(char* str);
+struct nlist* lookup (char* str);
+struct nlist* install(char* name, struct node* value);
 
 /*-------------------------------------------------------------.
 | [X] "struct nlist" es el tipo de dato de cada objeto         |
@@ -17,16 +22,28 @@
 | [X] "char* value" es el valor de cada pareja                 |
 `-------------------------------------------------------------*/
 
+struct node {
+	int x;
+	int y;
+	int h;
+	struct node* next;
+};
+
 struct nlist {
 	struct nlist* next;
 	char* name;
-	char* value;
+	struct node* value;
 };
 
 static struct nlist* hashtable[HASHSIZE];   /* tabla de punteros */
 
+static void hash_clear() {
+	for (int i = 0; i < HASHSIZE; i++)
+		hashtable[i] = NULL;
+}
+
 /* hash: genera un valor de "hash" para un string str */
-unsigned hash(char* str) {
+static unsigned hash(char* str) {
 	unsigned hashvalue;
 
 	for (hashvalue = 0; *str != '\0'; str++)
@@ -46,7 +63,7 @@ struct nlist* lookup (char* str) {
 }
 
 /* install: agrega una entrada con la pareja (name, value) a hashtable */
-struct nlist* install(char* name, char* value) {
+struct nlist* install(char* name, struct node* value) {
 	struct nlist* entry = lookup(name);
 	unsigned hashvalue;
 
@@ -59,10 +76,9 @@ struct nlist* install(char* name, char* value) {
 		hashvalue = hash(name);
 		entry->next = hashtable[hashvalue];
 		hashtable[hashvalue] = entry;
-	} else		/* nombre de entrada ya existía */
-		free((void*) entry->value);	/* liberar datos anteriores */
+	}
 
-	if ((entry->value = strdup(value)) == NULL)
+	if ((entry->value = value) == NULL)
 		return NULL;
 
 	return entry;
