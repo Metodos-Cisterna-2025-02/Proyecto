@@ -19,5 +19,5 @@ int mostrarmenuturno(FILE *log, int yausodispositivo);
 int realizarsorteocarasello(FILE *log);
 void seleccionardispositivos(dispositivousuario misdispositivos[], FILE *log);
 void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad);
-
+void usardispositivo(dispositivousuario *disp, FILE *log);
 #endif

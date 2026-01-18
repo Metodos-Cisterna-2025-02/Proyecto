@@ -208,3 +208,22 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
     }
 }
 
+void usardispositivo(dispositivousuario *disp, FILE *log) {
+
+    if (disp->disponible == 0) {
+        printf("El dispositivo ya fue usado.\n");
+        return;
+    }
+
+    // Marcar como usado
+    disp->disponible = 0;
+
+    printf("Dispositivo %s marcado como usado.\n", disp->nombre);
+
+    if (log != NULL) {
+        char mensaje[100];
+        strcpy(mensaje, "usó el dispositivo ");
+        strcat(mensaje, disp->nombre);
+        registraraccion(log, "Usuario", mensaje);
+    }
+}
