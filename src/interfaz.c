@@ -193,9 +193,9 @@ void seleccionardispositivos(dispositivousuario misdispositivos[], FILE *log) {
 
 
 void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
-    printf("\n==============================\n");
+    
     printf("  DISPOSITIVOS SELECCIONADOS  \n");
-    printf("==============================\n");
+    
 
     for (int i = 0; i < cantidad; i++) {
         printf("%d) %s | Disponible: ",
