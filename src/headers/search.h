@@ -1,17 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "io.h"
 #include "hash.h"
 
-#define MAX_VERTICAL 32
-#define MAX_HORIZONTAL 32
-#define MAX_HEIGHT 5
-#define MIN_HEIGHT 0
 #define MAX_DIFF 2
 #define MAX_DEPTH 1024
-
-#define MAP_TEST "maps/map_test.txt"
-#define MAP_TEST_SIZE 8
 
 struct pos {
 	int x;
@@ -27,15 +21,12 @@ struct Queue {
 
 static struct Queue* frontier;
 
-static FILE* mapFile;
-static int* map[MAX_VERTICAL];
+int** searchMap;
 static int visited[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentX[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentY[MAX_VERTICAL][MAX_HORIZONTAL];
 
 /* Prototipos de funciones */
-void readMap();
-void printMap();
 void search(int xStart, int yStart, int xEnd, int yEnd);
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd);
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd);
@@ -54,50 +45,11 @@ static struct pos* getCameFrom(struct pos* node);
 static int inCameFrom(struct pos* node);
 
 
-void readMap() {
-	int i;
-	int j;
-
-	mapFile = fopen(MAP_TEST, "r");
-
-	if (!mapFile) {
-		perror("Error al abrir el archivo");
-		return;
-	}
-
-	for (i = 0; i < MAP_TEST_SIZE; i++) {
-		map[i] = (int*) malloc(sizeof(int) * MAX_HORIZONTAL);
-		if (!map[i]) {
-			perror("Error al alocar memoria para fila");
-			fclose(mapFile);
-			return;
-		}
-		memset(map[i], 0, sizeof(int) * MAX_HORIZONTAL); /* llenar de ceros a la fila */
-	}
-
-	for (i = 0; i < MAP_TEST_SIZE; i++) {
-		for (j = 0; j < MAP_TEST_SIZE; j++) {
-			if (fscanf(mapFile, "%d", &map[i][j]) > MAX_HEIGHT) { /* valor (i,j) a map[i][j] */
-				map[i][j] = 0; /* valor por defecto */
-			}
-		}
-	}
-
-	fclose(mapFile);
-}
-
-void printMap() {
-	int i;
-	int j;
-	for (i = 0; i < MAP_TEST_SIZE; i++) {
-		for (j = 0; j < MAP_TEST_SIZE; j++)
-			printf("%d ", map[i][j]);
-		printf("\n");
-	}
-}
-
 void search(int xStart, int yStart, int xEnd, int yEnd) {
-	readMap();
+	if (!searchMap) {
+		searchMap = getMap();
+	}
+
 	memset(visited, 0, sizeof(visited));
 	memset(parentX, -1, sizeof(parentX));
 	memset(parentY, -1, sizeof(parentY));
@@ -106,11 +58,11 @@ void search(int xStart, int yStart, int xEnd, int yEnd) {
 	int head = 0, tail = 0;
 
 	struct pos start;
-	int hStart = map[yStart][xStart];
+	int hStart = searchMap[yStart][xStart];
 	posSet(&start, xStart, yStart, hStart);
 
 	struct pos end;
-	int hEnd = map[yEnd][xEnd];
+	int hEnd = searchMap[yEnd][xEnd];
 	posSet(&end, xEnd, yEnd, hEnd);
 
 	queue[tail++] = start;
@@ -133,7 +85,7 @@ void search(int xStart, int yStart, int xEnd, int yEnd) {
 			if (visited[ny][nx])
 				continue;
 
-			int nh = map[ny][nx];
+			int nh = searchMap[ny][nx];
 			if (abs(node.h - nh) > MAX_DIFF)
 				continue;
 
@@ -172,10 +124,10 @@ int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
 
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
 	struct pos start;
-	posSet(&start, xStart, yStart, map[yStart][xStart]);
+	posSet(&start, xStart, yStart, searchMap[yStart][xStart]);
 
 	struct pos node;
-	posSet(&node, xEnd, yEnd, map[yEnd][xEnd]);
+	posSet(&node, xEnd, yEnd, searchMap[yEnd][xEnd]);
 
 	struct pos* current = getCameFrom(&node);
 	if (current == NULL)
@@ -208,7 +160,7 @@ static void frontierAddNeighbours(int posX, int posY) {
 	int y = posY-1;
 	int h;
 	if (y >= 0) {
-		h = map[y][x];
+		h = searchMap[y][x];
 		struct pos* nodeUp = (struct pos*) malloc(sizeof(struct pos));
 		posSet(nodeUp, x, y, h);
 		install("up", (struct node*)nodeUp);
@@ -220,7 +172,7 @@ static void frontierAddNeighbours(int posX, int posY) {
 	x = posX+1;
 	y = posY;
 	if (x < MAP_TEST_SIZE) {
-		h = map[y][x];
+		h = searchMap[y][x];
 		struct pos* nodeRight = (struct pos*) malloc(sizeof(struct pos));
 		posSet(nodeRight, x, y, h);
 		install("right", (struct node*)nodeRight);
@@ -232,7 +184,7 @@ static void frontierAddNeighbours(int posX, int posY) {
 	x = posX;
 	y = posY+1;
 	if (y < MAP_TEST_SIZE) {
-		h = map[y][x];
+		h = searchMap[y][x];
 		struct pos* nodeDown = (struct pos*) malloc(sizeof(struct pos));
 		posSet(nodeDown, x, y, h);
 		install("down", (struct node*)nodeDown);
@@ -244,7 +196,7 @@ static void frontierAddNeighbours(int posX, int posY) {
 	x = posX-1;
 	y = posY;
 	if (x >= 0) {
-		h = map[y][x];
+		h = searchMap[y][x];
 		struct pos* nodeLeft = (struct pos*) malloc(sizeof(struct pos));
 		posSet(nodeLeft, x, y, h);
 		install("left", (struct node*)nodeLeft);

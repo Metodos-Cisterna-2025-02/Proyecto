@@ -3,12 +3,6 @@
 
 #define HASHSIZE 101
 
-static struct nlist* hashtable[HASHSIZE];
-static void hash_clear();
-static unsigned hash(char* str);
-struct nlist* lookup (char* str);
-struct nlist* install(char* name, struct node* value);
-
 /*-------------------------------------------------------------.
 | [X] "struct nlist" es el tipo de dato de cada objeto         |
 |      en la tabla de la "hash table" o "diccionario"          |
@@ -36,6 +30,12 @@ struct nlist {
 };
 
 static struct nlist* hashtable[HASHSIZE];   /* tabla de punteros */
+
+static void hash_clear();
+static unsigned hash(char* str);
+struct nlist* lookup (char* str);
+struct nlist* install(char* name, struct node* value);
+
 
 static void hash_clear() {
 	for (int i = 0; i < HASHSIZE; i++)
