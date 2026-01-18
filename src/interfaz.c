@@ -198,9 +198,7 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
     
 
     for (int i = 0; i < cantidad; i++) {
-        printf("%d) %s | Disponible: ",
-               i + 1,
-               misdispositivos[i].nombre);
+        printf("%d) %s | Disponible: ",i + 1,misdispositivos[i].nombre);
 
         if (misdispositivos[i].disponible == 1) {
             printf("SI\n");
