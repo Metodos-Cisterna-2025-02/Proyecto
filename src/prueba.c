@@ -36,7 +36,7 @@ int main() {
     } else {
         printf("\n>> PERDISTE EL SORTEO: La IA elige primero.\n");
         
-        printf("\nTURNO ELECCION DE DISPOSITIVOS: IA\n");
+        printf("\nTURNO DE ELECCION DE DISPOSITIVOS: IA\n");
         printf("La IA esta eligiendo sus dispositivos\n");
         
         printf("\nTURNO DE ELECCION DE DISPOSITIVOS: USUARIO\n");
