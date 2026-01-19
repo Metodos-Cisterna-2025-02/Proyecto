@@ -1,5 +1,5 @@
 #include "interfaz.h"
-
+//registrar
 void registraraccion(FILE *log, char *actor, char *accion) {
     if (log == NULL) return;
     time_t ahora = time(NULL);
