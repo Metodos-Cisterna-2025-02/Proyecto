@@ -27,19 +27,19 @@ int main() {
     if (turnousuario) {
         printf("\nGANASTE EL SORTEO: Eliges primero.\n");
         
-        printf("\nTURNO SELECCION USUARIO\n");
+        printf("\nTURNO DE ELECCION DE DISPOSITIVOS: USUARIO\n");
         seleccionardispositivos(misdispositivos, milog);
         
-        printf("\nTURNO SELECCION IA\n");
+        printf("\nTURNO DE ELECCION DE DISPOSITIVOS: IA\n");
         printf("La IA esta eligiendo sus dispositivos \n");
         
     } else {
         printf("\n>> PERDISTE EL SORTEO: La IA elige primero.\n");
         
-        printf("\nTURNO SELECCION IA\n");
+        printf("\nTURNO ELECCION DE DISPOSITIVOS: IA\n");
         printf("La IA esta eligiendo sus dispositivos\n");
         
-        printf("\nTURNO SELECCION USUARIO\n");
+        printf("\nTURNO DE ELECCION DE DISPOSITIVOS: USUARIO\n");
         seleccionardispositivos(misdispositivos, milog);
     }
 
