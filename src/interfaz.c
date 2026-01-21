@@ -1,5 +1,5 @@
 #include "interfaz.h"
-
+//registrar
 void registraraccion(FILE *log, char *actor, char *accion) {
     if (log == NULL) return;
     time_t ahora = time(NULL);
@@ -88,11 +88,11 @@ int mostrarmenuturno(FILE *log, int yausodispositivo) {
             esvalida = 1;
         }
         else if (opcion == 2 && yausodispositivo == 0) {
-            registraraccion(log, "Usuario", "selecciono opcion 2: Usar dispositivo");
+            registraraccion(log, "Usuario", "Seleccionó opcion 2: Usar dispositivo");
             esvalida = 1;
         }
         else if (opcion == 3) {
-            registraraccion(log, "Usuario", "selecciono opcion 3: Rendirse");
+            registraraccion(log, "Usuario", "Seleccionó opcion 3: Rendirse");
             esvalida = 1;
         }
         else {
@@ -176,7 +176,7 @@ void seleccionardispositivos(dispositivousuario misdispositivos[], FILE *log) {
             usados[eleccion - 1] = 1;
 
             
-            strcpy(mensaje_log, "seleccionó ");             
+            strcpy(mensaje_log, "Seleccionó ");             
             strcat(mensaje_log, catalogo[eleccion - 1]);    
             registraraccion(log, "Usuario", mensaje_log);
             
@@ -222,8 +222,13 @@ void usardispositivo(dispositivousuario *disp, FILE *log) {
 
     if (log != NULL) {
         char mensaje[100];
-        strcpy(mensaje, "usó el dispositivo ");
+        strcpy(mensaje, "Usó el dispositivo ");
         strcat(mensaje, disp->nombre);
         registraraccion(log, "Usuario", mensaje);
     }
+}
+void turnodeia(FILE *log) {
+    printf("\n--- TURNO DE LA IA ---\n");
+    registraraccion(log, "IA", "Realiza su jugada");
+    
 }
