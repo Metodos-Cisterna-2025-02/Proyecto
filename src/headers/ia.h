@@ -49,7 +49,7 @@ void turnoIA(jugador *ia, jugador *jugador, int **mapa, int metaX, int metaY) {
             mov = MOVE_UP;
         
             
-        // ¡ESTO ES LO QUE FALTABA!
+        
         ia->x = nx;
         ia->y = ny;
 
