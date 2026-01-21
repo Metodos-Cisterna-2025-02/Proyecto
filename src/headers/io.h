@@ -55,7 +55,7 @@ static void readMap() {
 		for (j = 0; j < MAP_TEST_SIZE; j++) {
 			fscanf(mapFile, "%d", &map[i][j]); /* valor (i,j) a map[i][j] */
 			int current;
-			current = snprintf(buffer, round(MAX_HEIGHT / 10) + 2, "%d", map[i][j]);
+			current = snprintf(buffer, floor(MAX_HEIGHT / 10) + 2, "%d", map[i][j]);
 			if (current < MIN_HEIGHT || current > MAX_HEIGHT) { 
 				map[i][j] = 0; /* valor por defecto en caso de no cumplir condicion de altura */
 			}
@@ -104,41 +104,6 @@ void printMap() {
 			printf("%d ", map[i][j]);
 		printf("\n");
 	}
-}
-
-/* Lee el archivo del mapa y lo guarda como una matriz de enteros */
-void readMap() {
-	int i;
-	int j;
-
-	mapFile = fopen(MAP_TEST, "r");
-
-	if (!mapFile) {
-		perror("Error al abrir el archivo");
-		return;
-	}
-
-	for (i = 0; i < MAP_TEST_SIZE; i++) {
-        map[i] = (int*) calloc(MAX_HORIZONTAL, __SIZEOF_INT__);
-		if (!map[i]) {
-			perror("Error al alocar memoria para fila");
-			fclose(mapFile);
-			return;
-		}
-	}
-
-	for (i = 0; i < MAP_TEST_SIZE; i++) {
-		for (j = 0; j < MAP_TEST_SIZE; j++) {
-			fscanf(mapFile, "%d", &map[i][j]); /* valor (i,j) a map[i][j] */
-			int current;
-			current = snprintf(buffer, round(MAX_HEIGHT / 10) + 2, "%d", map[i][j]);
-			if (current < MIN_HEIGHT || current > MAX_HEIGHT) { 
-				map[i][j] = 0; /* valor por defecto en caso de no cumplir condicion de altura */
-			}
-		}
-	}
-
-	fclose(mapFile);
 }
 
 // liberar memoria al final del juego
