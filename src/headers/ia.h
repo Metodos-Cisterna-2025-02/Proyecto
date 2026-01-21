@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "search.h"
 #include "jugador.h"
+#include "log.h"
 
 // Ahora reciben el mapa para pasárselo a search()
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd, int **mapa) {

@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "io.h"
-#include "interfaz.h"
-#include "jugador.h"
-#include "search.h"
-#include "ia.h"
+#include "headers/io.h"
+#include "headers/interfaz.h"
+#include "headers/jugador.h"
+#include "headers/search.h"
+#include "headers/ia.h"
 
 void printMapWithPlayers(int **mapa, jugador *j, jugador *ia, int metaX, int metaY) {
     // Limpia la consola para que el mapa parezca "animado"

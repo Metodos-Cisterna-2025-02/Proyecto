@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interfaz.h" // Necesario para dispositivousuario
+#include "log.h"     // Necesario para el registro de acciones
 
 /* 1. Definimos la estructura PRIMERO */
 typedef struct {
@@ -101,6 +102,7 @@ void turno_jugador(jugador *j, jugador *oponente, int **mapa) {
 			usardispositivojugador(j, oponente); // Ahora sí la reconocerá
 			yaUsoDispositivo = 1;
 		} else if (opcion == 3) { 
+			registerSimpleAction(turno, 1, SURRENDER, 0, 0, 1);
 			j->rendido = 1;
 			turnoTerminado = 1;
 		}

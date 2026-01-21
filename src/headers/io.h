@@ -10,7 +10,7 @@
 
 // Solo carga el mapa una vez
 static int** getMap() {
-    FILE *file = fopen("map_test.txt", "r");
+    FILE *file = fopen("maps/map_test.txt", "r");
     if (!file) {
         perror("Error al abrir map_test.txt");
         return NULL;
