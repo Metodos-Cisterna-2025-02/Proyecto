@@ -4,6 +4,10 @@
 
 
 #include <stdio.h>
+#include "interfaz.h"
+#include "dispositivos.h"
+
+
 typedef struct dispositivousuario dispositivousuario; //avisamos que existe el struck de joaco-pancho
 
 typedef struct { // con item
@@ -173,7 +177,8 @@ static void usardispositivojugador(jugador *j, jugador *oponente, FILE *log) {
 
     if (disp->disponible) {
         usardispositivo(disp, log);          // marca usado + log
-        aplicarefecto(disp, j, oponente);    // funcion aplciar efecto disp
+        llamardispositivo()
+             
     } else {
         printf("Ese dispositivo ya fue usado o no esta disponible\n");
     }
