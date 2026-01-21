@@ -27,12 +27,12 @@ static int parentX[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentY[MAX_VERTICAL][MAX_HORIZONTAL];
 
 /* Prototipos de funciones */
-void search(int xStart, int yStart, int xEnd, int yEnd);
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd);
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd);
 int posGetX(struct pos target);
 int posGetY(struct pos target);
 int posGetH(struct pos target);
+static void search(int xStart, int yStart, int xEnd, int yEnd);
 static void frontierAddNeighbours(int posX, int posY);
 static struct pos* getNeighbour(char* key);
 static void posSet(struct pos* target, int xPos, int yPos, int height);
@@ -45,14 +45,14 @@ static struct pos* getCameFrom(struct pos* node);
 static int inCameFrom(struct pos* node);
 
 
-void search(int xStart, int yStart, int xEnd, int yEnd) {
+static void search(int xStart, int yStart, int xEnd, int yEnd) {
 	if (!searchMap) {
 		searchMap = getMap();
 	}
 
-	memset(visited, 0, sizeof(visited));
-	memset(parentX, -1, sizeof(parentX));
-	memset(parentY, -1, sizeof(parentY));
+	memset(visited, 0, sizeof(visited));  // Inicializar VISITED al valor de "no visitado"
+	memset(parentX, -1, sizeof(parentX)); // Inicializar PARENT_X al valor de "sin padre"
+	memset(parentY, -1, sizeof(parentY)); // Inicializar PARENT_Y al valor de "sin padre"
 
 	struct pos queue[MAX_VERTICAL * MAX_HORIZONTAL];
 	int head = 0, tail = 0;
@@ -65,33 +65,46 @@ void search(int xStart, int yStart, int xEnd, int yEnd) {
 	int hEnd = searchMap[yEnd][xEnd];
 	posSet(&end, xEnd, yEnd, hEnd);
 
+	/* agregar nodo inicial a la cola y establecerlo como visitado */
 	queue[tail++] = start;
 	visited[start.y][start.x] = 1;
 
+	/* posibles movimientos: arriba, derecha, abajo, izquierda */
 	int dirs[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};
 
+	// Búsqueda en anchura (BFS)
+	// el indice tail inicia como el valor 1, dado que ya se agregó el nodo inicial
 	while (head < tail) {
+		// Inicializar nodo actual como el primer nodo en la cola y aumentar el índice head
 		struct pos node = queue[head++];
 
+		// Se alcanzó el nodo objetivo, salir del ciclo
 		if (node.x == end.x && node.y == end.y)
 			break;
 
+		// Explorar vecinos
 		for (int i = 0; i < 4; i++) {
-			int nx = node.x + dirs[i][0];
-			int ny = node.y + dirs[i][1];
+			int nx = node.x + dirs[i][0]; // Posicion X del vecino
+			int ny = node.y + dirs[i][1]; // Posicion Y del vecino
+
+			// Verificar límites del mapa, ignorar nodo si está fuera de los límites
 			if (nx < 0 || nx >= MAP_TEST_SIZE || ny < 0 || ny >= MAP_TEST_SIZE)
 				continue;
 
+			// Verificar si ya fue visitado, ignorar nodo si ya fue visitado
 			if (visited[ny][nx])
 				continue;
 
-			int nh = searchMap[ny][nx];
+			int nh = searchMap[ny][nx]; // Altura del nodo vecino
+			// Verificar diferencia de altura, ignorar nodo si la diferencia es mayor a MAX_DIFF
 			if (abs(node.h - nh) > MAX_DIFF)
 				continue;
 
+			// Vecino es un nodo valido, agregar a la cola de la frontera
 			struct pos next;
 			posSet(&next, nx, ny, nh);
 			queue[tail++] = next;
+			// Marcar vecino como visitado y establecer su padre
 			visited[ny][nx] = 1;
 			parentX[ny][nx] = node.x;
 			parentY[ny][nx] = node.y;
@@ -102,6 +115,8 @@ void search(int xStart, int yStart, int xEnd, int yEnd) {
 }
 
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
+	search(xStart, yStart, xEnd, yEnd); /* actualizar rutas contra cambios */
+
 	int d = 0;
 	
 	if (!visited[yEnd][xEnd])
@@ -123,6 +138,8 @@ int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
 }
 
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
+	search(xStart, yStart, xEnd, yEnd); /* actualizar rutas contra cambios */
+
 	struct pos start;
 	posSet(&start, xStart, yStart, searchMap[yStart][xStart]);
 
