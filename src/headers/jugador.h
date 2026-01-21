@@ -24,9 +24,9 @@ typedef struct { // con item
 
 
 void turno_jugador(jugador *j, jugador *oponente, int mapa[8][8], FILE *log);  
-static int mover_jugador(jugador *j, char direccion, int mapa[8][8]) {
-static int es_movimiento_valido(jugador *j, int nx, int ny, int mapa[8][8]) {
-static void usardispositivojugador(jugador *j, jugador *oponente, FILE *log)
+static int mover_jugador(jugador *j, char direccion, int mapa[8][8]);
+static int es_movimiento_valido(jugador *j, int nx, int ny, int mapa[8][8]);
+static void usardispositivojugador(jugador *j, jugador *oponente, FILE *log);
 
 
 
