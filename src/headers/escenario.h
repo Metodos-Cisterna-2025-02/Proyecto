@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "search.h"
 //falta busqueda de caminos validos para ambos jugadores
+
 void generar_escenario(int escenario[8][8]){
     int i, j, referencia;
     for(i=0; i<8; i++){
