@@ -1,3 +1,6 @@
+#ifndef ESCENARIO_H
+#define ESCENARIO_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "search.h"
@@ -29,3 +32,5 @@ void coordenadas_inicio(int *x, int *y, int x_meta, int y_meta){
         }
     }
 }
+
+#endif // ESCENARIO_H

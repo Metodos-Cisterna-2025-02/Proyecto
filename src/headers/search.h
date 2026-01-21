@@ -1,3 +1,6 @@
+#ifndef SEARCH_H
+#define SEARCH_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,38 +24,34 @@ struct Queue {
 
 static struct Queue* frontier;
 
-int** searchMap;
+/* Cambiamos searchMap a int** para que coincida con io.h */
+static int** searchMap = NULL; 
 static int visited[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentX[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentY[MAX_VERTICAL][MAX_HORIZONTAL];
 
 /* Prototipos de funciones */
+void search(int xStart, int yStart, int xEnd, int yEnd, int **mapaActual);
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd);
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd);
 int posGetX(struct pos target);
 int posGetY(struct pos target);
 int posGetH(struct pos target);
-static void search(int xStart, int yStart, int xEnd, int yEnd);
-static void frontierAddNeighbours(int posX, int posY);
-static struct pos* getNeighbour(char* key);
 static void posSet(struct pos* target, int xPos, int yPos, int height);
-static void frontierInit();
-static int frontierIsEmpty();
-static void frontierPut(struct pos* node);
-static struct pos* frontierPop();
-static void setCameFrom(struct pos* node, struct pos* previous);
-static struct pos* getCameFrom(struct pos* node);
-static int inCameFrom(struct pos* node);
 
+/* --- FUNCIONES DE BUSQUEDA --- */
 
-static void search(int xStart, int yStart, int xEnd, int yEnd) {
+void search(int xStart, int yStart, int xEnd, int yEnd, int **mapaActual) {
+    // En lugar de getMap(), usamos el mapa que está usando el juego
+    searchMap = mapaActual; 
+
 	if (!searchMap) {
 		searchMap = getMap();
 	}
 
-	memset(visited, 0, sizeof(visited));  // Inicializar VISITED al valor de "no visitado"
-	memset(parentX, -1, sizeof(parentX)); // Inicializar PARENT_X al valor de "sin padre"
-	memset(parentY, -1, sizeof(parentY)); // Inicializar PARENT_Y al valor de "sin padre"
+	memset(visited, 0, sizeof(visited));
+	memset(parentX, -1, sizeof(parentX));
+	memset(parentY, -1, sizeof(parentY));
 
 	struct pos queue[MAX_VERTICAL * MAX_HORIZONTAL];
 	int head = 0, tail = 0;
@@ -61,175 +60,82 @@ static void search(int xStart, int yStart, int xEnd, int yEnd) {
 	int hStart = searchMap[yStart][xStart];
 	posSet(&start, xStart, yStart, hStart);
 
-	struct pos end;
-	int hEnd = searchMap[yEnd][xEnd];
-	posSet(&end, xEnd, yEnd, hEnd);
-
-	/* agregar nodo inicial a la cola y establecerlo como visitado */
 	queue[tail++] = start;
-	visited[start.y][start.x] = 1;
+	visited[yStart][xStart] = 1;
 
-	/* posibles movimientos: arriba, derecha, abajo, izquierda */
 	int dirs[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};
 
-	// Búsqueda en anchura (BFS)
-	// el indice tail inicia como el valor 1, dado que ya se agregó el nodo inicial
 	while (head < tail) {
-		// Inicializar nodo actual como el primer nodo en la cola y aumentar el índice head
 		struct pos node = queue[head++];
 
-		// Se alcanzó el nodo objetivo, salir del ciclo
-		if (node.x == end.x && node.y == end.y)
+		if (node.x == xEnd && node.y == yEnd)
 			break;
 
-		// Explorar vecinos
 		for (int i = 0; i < 4; i++) {
-			int nx = node.x + dirs[i][0]; // Posicion X del vecino
-			int ny = node.y + dirs[i][1]; // Posicion Y del vecino
-
-			// Verificar límites del mapa, ignorar nodo si está fuera de los límites
+			int nx = node.x + dirs[i][0];
+			int ny = node.y + dirs[i][1];
+			
 			if (nx < 0 || nx >= MAP_TEST_SIZE || ny < 0 || ny >= MAP_TEST_SIZE)
 				continue;
 
-			// Verificar si ya fue visitado, ignorar nodo si ya fue visitado
 			if (visited[ny][nx])
 				continue;
 
-			int nh = searchMap[ny][nx]; // Altura del nodo vecino
-			// Verificar diferencia de altura, ignorar nodo si la diferencia es mayor a MAX_DIFF
+			int nh = searchMap[ny][nx];
 			if (abs(node.h - nh) > MAX_DIFF)
 				continue;
 
-			// Vecino es un nodo valido, agregar a la cola de la frontera
 			struct pos next;
 			posSet(&next, nx, ny, nh);
 			queue[tail++] = next;
-			// Marcar vecino como visitado y establecer su padre
 			visited[ny][nx] = 1;
 			parentX[ny][nx] = node.x;
 			parentY[ny][nx] = node.y;
 		}
 	}
+}
 
-	return;
+/* JUSTO Y NECESARIO: getNext ahora usa las matrices parentX/Y 
+   que ya llenas en search(), asi la IA por fin se mueve.
+*/
+struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
+	if (!visited[yEnd][xEnd]) return NULL;
+
+	int cx = xEnd;
+	int cy = yEnd;
+	int stepX = xEnd;
+	int stepY = yEnd;
+
+	// Reconstruimos el camino hacia atras
+	while (!(parentX[cy][cx] == xStart && parentY[cy][cx] == yStart)) {
+		stepX = cx;
+		stepY = cy;
+		int tx = parentX[cy][cx];
+		int ty = parentY[cy][cx];
+		if (tx == -1) return NULL;
+		cx = tx;
+		cy = ty;
+	}
+
+	struct pos* res = (struct pos*)malloc(sizeof(struct pos));
+	posSet(res, cx, cy, searchMap[cy][cx]);
+	return res;
 }
 
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
-	search(xStart, yStart, xEnd, yEnd); /* actualizar rutas contra cambios */
-
 	int d = 0;
-	
-	if (!visited[yEnd][xEnd])
-		return -1; /* no alcanzado */
+	if (!visited[yEnd][xEnd]) return -1;
 
 	int cx = xEnd;
 	int cy = yEnd;
 	while (!(cx == xStart && cy == yStart)) {
 		int px = parentX[cy][cx];
 		int py = parentY[cy][cx];
-		if (px == -1 || py == -1)
-			return -1;
-		cx = px;
-		cy = py;
+		if (px == -1) return -1;
+		cx = px; cy = py;
 		d++;
 	}
-
 	return d;
-}
-
-struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
-	search(xStart, yStart, xEnd, yEnd); /* actualizar rutas contra cambios */
-
-	struct pos start;
-	posSet(&start, xStart, yStart, searchMap[yStart][xStart]);
-
-	struct pos node;
-	posSet(&node, xEnd, yEnd, searchMap[yEnd][xEnd]);
-
-	struct pos* current = getCameFrom(&node);
-	if (current == NULL)
-		return NULL;
-	
-	struct pos* next = getCameFrom(current);
-	while (next != NULL && (next->x != start.x || next->y != start.y)) {
-		current = next;
-		next = getCameFrom(current);
-	}
-
-	return current;
-}
-
-int posGetX(struct pos target) {
-	return target.x;
-}
-
-int posGetY(struct pos target) {
-	return target.y;
-}
-
-int posGetH(struct pos target) {
-	return target.h;
-}
-
-static void frontierAddNeighbours(int posX, int posY) {
-	/* agregar nodo de arriba a hashtable */
-	int x = posX;
-	int y = posY-1;
-	int h;
-	if (y >= 0) {
-		h = searchMap[y][x];
-		struct pos* nodeUp = (struct pos*) malloc(sizeof(struct pos));
-		posSet(nodeUp, x, y, h);
-		install("up", (struct node*)nodeUp);
-	} else {
-		install("up", NULL);
-	}
-
-	/* agregar nodo de la derecha a hashtable */
-	x = posX+1;
-	y = posY;
-	if (x < MAP_TEST_SIZE) {
-		h = searchMap[y][x];
-		struct pos* nodeRight = (struct pos*) malloc(sizeof(struct pos));
-		posSet(nodeRight, x, y, h);
-		install("right", (struct node*)nodeRight);
-	} else {
-		install("right", NULL);
-	}
-
-	/* agregar nodo de abajo a hashtable */
-	x = posX;
-	y = posY+1;
-	if (y < MAP_TEST_SIZE) {
-		h = searchMap[y][x];
-		struct pos* nodeDown = (struct pos*) malloc(sizeof(struct pos));
-		posSet(nodeDown, x, y, h);
-		install("down", (struct node*)nodeDown);
-	} else {
-		install("down", NULL);
-	}
-
-	/* agregar nodo de la izquierda a hashtable */
-	x = posX-1;
-	y = posY;
-	if (x >= 0) {
-		h = searchMap[y][x];
-		struct pos* nodeLeft = (struct pos*) malloc(sizeof(struct pos));
-		posSet(nodeLeft, x, y, h);
-		install("left", (struct node*)nodeLeft);
-	} else {
-		install("left", NULL);
-	}
-
-	return;
-}
-
-static struct pos* getNeighbour(char* key) {
-	struct nlist* entry = lookup(key);
-	if (entry == NULL)
-		return NULL;
-
-	return (struct pos*) entry->value;
 }
 
 static void posSet(struct pos* target, int xPos, int yPos, int height) {
@@ -237,63 +143,10 @@ static void posSet(struct pos* target, int xPos, int yPos, int height) {
 	target->y = yPos;
 	target->h = height;
 	target->next = NULL;
-	
-	return;
 }
 
-static void frontierInit() {
-	frontier = (struct Queue*) malloc(sizeof(struct Queue) * MAX_DEPTH); 
-	frontier->first = frontier->last = NULL;
+int posGetX(struct pos target) { return target.x; }
+int posGetY(struct pos target) { return target.y; }
+int posGetH(struct pos target) { return target.h; }
 
-	return;
-}
-
-static int frontierIsEmpty() {
-	return (frontier->first == NULL);
-}
-
-static void frontierPut(struct pos* node) {
-	if (frontierIsEmpty())
-		frontier->first = frontier->last = node;
-	else {
-		frontier->last->next = node;
-		frontier->last = node;
-	}
-
-	return;
-}
-
-static struct pos* frontierPop() {
-	if (frontierIsEmpty())
-		return NULL;
-	
-	struct pos* node = frontier->first;
-	frontier->first = frontier->first->next;
-
-	return node;
-}
-
-static void setCameFrom(struct pos* node, struct pos* previous) {
-	char key[20];
-	snprintf(key, 20, "%d %d", node->x, node->y);
-	install(key, (struct node*)previous);
-
-	return;
-}
-
-static struct pos* getCameFrom(struct pos* node) {
-	char key[20];
-	snprintf(key, 20, "%d %d", node->x, node->y);
-	struct nlist* entry = lookup(key);
-	if (entry != NULL)
-		return (struct pos*)entry->value;
-	
-	return NULL;
-}
-
-static int inCameFrom(struct pos* node) {
-	if (node == NULL)
-		return 1; /* already handled via visited */
-
-	return visited[node->y][node->x];
-}
+#endif

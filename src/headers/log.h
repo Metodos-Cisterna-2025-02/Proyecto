@@ -105,7 +105,7 @@ static void createLogFile() {
 // "6.J2:X" = Turno 6, Jugador 2, Rendición
 static char* actionToNotation(Action *action) {
 	static char notation[50];
-	char typeChar[] = {'N', 'S', 'W', 'E', 'U', 'X'};
+	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X'};
 	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
 	

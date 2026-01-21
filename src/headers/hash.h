@@ -1,3 +1,6 @@
+#ifndef HASH_H
+#define HASH_H
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -83,3 +86,5 @@ struct nlist* install(char* name, struct node* value) {
 
 	return entry;
 }
+
+#endif // HASH_H
