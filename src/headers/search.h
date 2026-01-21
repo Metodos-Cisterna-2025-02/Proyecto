@@ -42,8 +42,7 @@ static void posSet(struct pos* target, int xPos, int yPos, int height);
 /* --- FUNCIONES DE BUSQUEDA --- */
 
 void search(int xStart, int yStart, int xEnd, int yEnd, int **mapaActual) {
-    // En lugar de getMap(), usamos el mapa que está usando el juego
-    searchMap = mapaActual; 
+    searchMap = getMap(); 
 
 	if (!searchMap) {
 		searchMap = getMap();
@@ -95,9 +94,6 @@ void search(int xStart, int yStart, int xEnd, int yEnd, int **mapaActual) {
 	}
 }
 
-/* JUSTO Y NECESARIO: getNext ahora usa las matrices parentX/Y 
-   que ya llenas en search(), asi la IA por fin se mueve.
-*/
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
 	if (!visited[yEnd][xEnd]) return NULL;
 
