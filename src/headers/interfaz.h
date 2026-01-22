@@ -1,3 +1,8 @@
+#ifndef INTERFAZ_H
+#define INTERFAZ_H
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,49 +72,22 @@ char pedirmovimiento(int turno) {
 }
 
 int mostrarmenuturno(int turno, int yausodispositivo) {
-	int opcion;
-	int esvalida = 0;
-	int leidos;
+    int opcion;
+    int leidos;
 
-	printf("\n   MENU DE TURNO    \n");
-	printf("1. Moverse\n");
-	if (yausodispositivo == 0) {
-		printf("2. Usar Dispositivo\n");
-	} else {
-		printf("2. Ya usaste un dispositivo durante este turno\n");
-	}
-	printf("3. Rendirse\n");
+    printf("\n   MENU DE TURNO    \n");
+    printf("1. Moverse\n");
+    printf(yausodispositivo == 0 ? "2. Usar Dispositivo\n" : "2. [Dispositivo usado]\n");
+    printf("3. Rendirse\n");
 
-	while (!esvalida) {
-		printf("Elige una opcion: ");
-		leidos = scanf("%d", &opcion);
+    printf("Elige una opcion: ");
+    leidos = scanf("%d", &opcion);
 
-		if (leidos != 1) {
-			printf("Entrada invalida. Debe ser un numero.\n");
-			while (getchar() != '\n')
-				continue;
-		}
-
-		if (opcion == 1) {
-			esvalida = 1;
-			pedirmovimiento(turno);
-		}
-		else if (opcion == 2 && yausodispositivo == 0) {
-			esvalida = 1;
-			// Aquí se llamaría a la función para usar un dispositivo
-			// Por ahora solo registramos la acción de usar dispositivo genérico
-			registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, 0, 0, 0, 0, 0,
-								NONE, NONE, NONE, esvalida);
-		}
-		else if (opcion == 3) {
-			esvalida = 1;
-			registerSimpleAction(turno, 1, SURRENDER, 0, 0, esvalida);
-		}
-		else
-			printf("Opcion no permitida.\n");
-	}
-
-	return opcion;
+    if (leidos != 1) {
+        while (getchar() != '\n'); // Limpiar buffer
+        return -1;
+    }
+    return opcion; // Solo retorna el número, no pide el WASD aquí.
 }
 
 int realizarsorteocarasello() {
@@ -220,3 +198,5 @@ void turnodeia(int turno) {
 								NONE, NONE, NONE, 1);
 	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
 }
+
+#endif
