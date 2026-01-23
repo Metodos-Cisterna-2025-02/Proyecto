@@ -45,7 +45,7 @@ static char* actionToNotation(Action *action) {
 	static char notation[50];
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
-	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X'};
+	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X', 'V'};
 	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
 
@@ -118,12 +118,22 @@ static char* actionToNotation(Action *action) {
 				deviceChar[action->selectedDevice], 
 				action->selectionOrder);
 	}
+	else if (action->actionType == VICTORY) {
+		// Victoria: "7.J1:V"
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c",
+				t->tm_hour, t->tm_min, t->tm_sec,
+				action->turn, action->player, typeChar[action->actionType]);
+	}
 	else {
 		// Movimiento normal
-		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c(%d,%d)%c",
+		action->previousX = action->targetX - (action->actionType == MOVE_RIGHT ? 1 :
+									action->actionType == MOVE_LEFT ? -1 : 0);
+		action->previousY = action->targetY - (action->actionType == MOVE_DOWN ? 1 :
+									action->actionType == MOVE_UP ? -1 : 0);
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c(%d,%d)->(%d,%d)%c",
 				t->tm_hour, t->tm_min, t->tm_sec,
 				action->turn, action->player, typeChar[action->actionType],
-				action->targetX, action->targetY, result);
+				action->previousX, action->previousY, action->targetX, action->targetY, result);
 	}
 	
 	return notation;
@@ -160,6 +170,8 @@ void registerCompleteAction(int turn, int player, ActionType actionType,
 	action.player = player;
 	action.actionType = actionType;
 	action.device = device;
+	action.previousX = x;
+	action.previousY = y;
 	action.targetX = x;
 	action.targetY = y;
 	action.previousValue = prevValue;
@@ -177,7 +189,7 @@ void registerCompleteAction(int turn, int player, ActionType actionType,
 	fflush(logFile);
 }
 
-// Función para registrar acciones simples (movimientos o rendición)
+// Función para registrar acciones simples (movimientos, rendición, o victoria)
 void registerSimpleAction(int turn, int player, ActionType actionType,
 						 int x, int y, int successful) {
 	registerCompleteAction(turn, player, actionType, NONE, x, y, 0, 0, 0,
@@ -203,6 +215,8 @@ void registerCoinFlip(int player, int choice, int result) {
 	action.player = player;
 	action.actionType = COIN_FLIP;
 	action.device = NONE;
+	action.previousX = 0;
+	action.previousY = 0;
 	action.targetX = 0;
 	action.targetY = 0;
 	action.previousValue = 0;
@@ -241,6 +255,8 @@ void registerDeviceSelection(int player, DeviceType device, int order) {
 	action.player = player;
 	action.actionType = SELECT_DEVICE;
 	action.device = NONE;
+	action.previousX = 0;
+	action.previousY = 0;
 	action.targetX = 0;
 	action.targetY = 0;
 	action.previousValue = 0;

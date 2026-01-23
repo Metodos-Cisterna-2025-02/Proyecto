@@ -105,6 +105,7 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 		}
 		else if (opcion == 3) {
 			registerSimpleAction(turno, 1, SURRENDER, 0, 0, 1);
+			registerSimpleAction(turno, 2, VICTORY, 0, 0, 1);
 			j->rendido = 1;
 			turnoTerminado = 1;
 		}

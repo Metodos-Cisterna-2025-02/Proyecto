@@ -25,19 +25,15 @@ char pedirmovimiento(int turno) {
 
 		if (tecla == 'w' || tecla == 'W') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_UP, 0, 0, esvalida);
 		}
 		else if (tecla == 'a' || tecla == 'A') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_LEFT, 0, 0, esvalida);
 		}
 		else if (tecla == 's' || tecla == 'S') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_DOWN, 0, 0, esvalida);
 		}
 		else if (tecla == 'd' || tecla == 'D') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_RIGHT, 0, 0, esvalida);
 		}
 		else {
 			printf("Tecla invalida. Usa W, A, S o D.\n");

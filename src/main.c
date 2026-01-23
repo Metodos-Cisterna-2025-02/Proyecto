@@ -81,6 +81,9 @@ int main(int argc, char *argv[]) {
 	ia.rendido = 0;
 	ia.puedeSubir3 = 0;
 
+	// Inicializar la interfaz gráfica con posiciones iniciales y meta
+	initializeInterface(player.x, player.y, ia.x, ia.y, metaX, metaY);
+
 	int turno = 1;
 	int juegoTerminado = 0;
 

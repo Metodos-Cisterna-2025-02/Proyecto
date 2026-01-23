@@ -87,6 +87,9 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 	//Mover hacia objetivo 
 	int puede_moverse = ia_siguiente_paso(ia->x, ia->y, metaX, metaY, &nx, &ny);
 	if (puede_moverse) {
+		int xOld = ia->x;
+		int yOld = ia->y;
+		int hOld = mapa[ia->y][ia->x];
 		ActionType mov;
 		if (ia->x - nx == -1) // x - (x + 1) = -1
 			mov = MOVE_RIGHT;
@@ -97,6 +100,8 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 		else if (ia->y - ny == 1)
 			mov = MOVE_UP;
 		
+		// Actualizar interfaz antes de modificar la estructura
+		updateInterfaceAI(xOld, yOld, hOld, nx, ny);
 		ia->x = nx;
 		ia->y = ny;
 		ia->h = mapa[ny][nx];
@@ -110,6 +115,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 
 		printf("IA no encontro un camino valido hacia la meta.\n");
 		registerSimpleAction(turno, 2, SURRENDER, ia->x, ia->y, 1);
+		registerSimpleAction(turno, 1, VICTORY, 0, 0, 1);
 	}
 }
 

@@ -61,6 +61,9 @@ static void readMap() {
 	}
 
 	fclose(mapFile);
+
+	// Marcar mapa como cargado para evitar releer en cada acceso
+	mapLoaded = 1;
 }
 
 /* Retorna el mapa como una matriz de NxM enteros */
