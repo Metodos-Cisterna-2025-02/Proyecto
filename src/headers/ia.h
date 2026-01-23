@@ -74,7 +74,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
     	}
 
     	// Jugador esta mas cerca o igual??                 DISPP
-	if (pj_dist <= ia_dist && tiene_items) {
+	if ((pj_dist <= ia_dist) && tiene_items) {
 		printf(" [IA] El jugador esta mas cerca o igual. Atacando...\n");
 		activar_dispositivo(turno, 2, ia, jugador);
         
@@ -109,6 +109,9 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 		exito = 1;
 
 		registerSimpleAction(turno, 2, mov, nx, ny, exito);
+		if (nx == metaX && ny == metaY) {
+			registerSimpleAction(turno, 2, VICTORY, 0, 0, 1);
+		}
 	} else {
 		// TODO: IA no encontró camino, SE RINDEE
 		ia->rendido = 1;

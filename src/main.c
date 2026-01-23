@@ -168,6 +168,7 @@ int main(int argc, char *argv[]) {
 
 		if (player.x == metaX && player.y == metaY) {
 			printf("\n HAS GANADO!!!! Llegaste a la meta.\n");
+			registerSimpleAction(turno, 1, VICTORY, player.x, player.y, 1);
 			juegoTerminado = 1;
 			break;
 		}

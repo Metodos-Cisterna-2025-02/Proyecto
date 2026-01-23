@@ -70,8 +70,7 @@ static void search(int xStart, int yStart, int xEnd, int yEnd) {
 }
 
 struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
-	if (!searchMap)
-		search(xStart, yStart, xEnd, yEnd);
+	search(xStart, yStart, xEnd, yEnd);
 
 	if (!visited[yEnd][xEnd]) return NULL;
 
@@ -93,8 +92,7 @@ struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd) {
 }
 
 int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
-	if (!searchMap)
-		search(xStart, yStart, xEnd, yEnd);
+	search(xStart, yStart, xEnd, yEnd);
 
 	int d = 0;
 	if (!visited[yEnd][xEnd]) return -1;

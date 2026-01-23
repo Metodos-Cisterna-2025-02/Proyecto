@@ -77,36 +77,40 @@ void aplicar_efecto_dispositivo(jugador *sujeto, jugador *rival, dispositivousua
 	
 
 static void usar_Gaius(jugador *usuario, int turno) {
-	
-	int **mapa = getMap();
-	printf("\n--- GAIUS ACTIVADO: Modificador de Terreno ---\n");
-	
-	for (int i = 0; i < 3; i++) {
-		int x;
-		int y;
-		int opcion;
-		printf("\n[Modificacion %d/3] Ingresa coordenada Y (o -1 para terminar): ", i + 1);
-		if (scanf("%d", &y) != 1) {
-			break; 
-		}
-		
-		printf("\n[Modificacion %d/3] Ingresa coordenada X (o -1 para terminar): ", i + 1);
-		if (scanf("%d", &x) != 1) {
-			break;
-		}
-		
-		// Salida anticipada si el usuario no quiere usar los 3
-		if (x == -1) {
-			printf("Terminando uso de Gaius.\n");
-			break;
-		}
+    
+    int **mapa = getMap();
+    printf("\n--- GAIUS ACTIVADO: Modificador de Terreno ---\n");
+    
+    for (int i = 0; i < 3; i++) {
+        int x;
+        int y;
+        int opcion;
+        printf("\n[Modificacion %d/3] Ingresa coordenada Y (o -1 para terminar): ", i + 1);
+        if (scanf("%d", &y) != 1) {
+            registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, -1, -1, 0, 0, 0, NONE, NONE, NONE, 0);
+            break; 
+        }
+        
+        printf("\n[Modificacion %d/3] Ingresa coordenada X (o -1 para terminar): ", i + 1);
+        if (scanf("%d", &x) != 1) {
+            registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, -1, -1, 0, 0, 0, NONE, NONE, NONE, 0);
+            break;
+        }
+        
+        // Salida anticipada si el usuario no quiere usar los 3
+        if (x == -1) {
+            printf("Terminando uso de Gaius.\n");
+            registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, -1, -1, 0, 0, 0, NONE, NONE, NONE, 1);
+            break;
+        }
 
-		// Validacion rangos 
-		if (x < 0 || x >= MAP_TEST_SIZE || y < 0 || y >= MAP_TEST_SIZE) {
-			printf("Error: Coordenadas fuera del mapa.\n");
-			i--; // No gastamos el intento si se equivocó de tecla
-			continue; 
-		}
+        // Validacion rangos 
+        if (x < 0 || x >= MAP_TEST_SIZE || y < 0 || y >= MAP_TEST_SIZE) {
+            printf("Error: Coordenadas fuera del mapa.\n");
+            i--; // No gastamos el intento si se equivocó de tecla
+            registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, x, y, 0, 0, 0, NONE, NONE, NONE, 0);
+            continue; 
+        }
 
        
 		int alturaActual = mapa[y][x]; 
@@ -123,6 +127,7 @@ static void usar_Gaius(jugador *usuario, int turno) {
 		} else {
 			printf("Opcion invalida.\n");
 			i--;
+			registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, x, y, alturaActual, alturaActual, 0, NONE, NONE, NONE, 0);
 			continue;
 		}
 
@@ -139,6 +144,7 @@ static void usar_Gaius(jugador *usuario, int turno) {
 				NONE, NONE, NONE, 1);
 		} else {
 			printf("Aviso: No se pudo modificar (limites de altura alcanzados).\n");
+			registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, x, y, alturaActual, alturaActual, 0, NONE, NONE, NONE, 0);
 		}
 	}
 }
@@ -220,18 +226,19 @@ static void usar_Hydrus(jugador *rival, int turno) {
 
 
 static void usar_Quadratus(jugador *rival, int turno) {
-	
-	printf("\n--- QUADRATUS ACTIVADO: Bloqueo de Sistema ---\n");
-	
-	int idObjetivo;
-	
-	printf("¿Que dispositivo quieres bloquear al rival?\n");
-	printf("1. Gaius\n2. Quadratus\n3. Hydrus\n4. Phalanx\n5. Argus\n");
-	printf("Selecciona el ID (1-5): ");
-	
-	if (scanf("%d", &idObjetivo) != 1){
-		return;
-	}
+    
+    printf("\n--- QUADRATUS ACTIVADO: Bloqueo de Sistema ---\n");
+    
+    int idObjetivo;
+    
+    printf("¿Que dispositivo quieres bloquear al rival?\n");
+    printf("1. Gaius\n2. Quadratus\n3. Hydrus\n4. Phalanx\n5. Argus\n");
+    printf("Selecciona el ID (1-5): ");
+    
+    if (scanf("%d", &idObjetivo) != 1){
+        registerCompleteAction(turno, 1, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+        return;
+    }
 	// Convertimos ID a string de nombre para buscar en el inventario opuesto
 	char nombreBuscado[16];
 	
@@ -291,79 +298,97 @@ static void usar_Quadratus(jugador *rival, int turno) {
 
 
 static void usar_Argus(jugador *yo, jugador *rival, int turno) {
-	printf("\n--- ARGUS ACTIVADO: Recuperacion de descartes ---\n");
+    printf("\n--- ARGUS ACTIVADO: Recuperacion de descartes ---\n");
 
-	// DEBEMOS DETECTAR DESCARTES
-	int rivalTiene[6] = {0, 0, 0, 0, 0, 0}; 
+    // DEBEMOS DETECTAR DESCARTES
+    int rivalTiene[6] = {0, 0, 0, 0, 0, 0}; 
 
-	// Recorremos el inventario del rival para ver que tiene
-	for (int i = 0; i < 3; i++) {
-		for (int id = 1; id <= 5; id++) {
-			if (strcasecmp(rival->inventario[i].nombre, obtenerNombreDispositivo(id)) == 0) {
-				rivalTiene[id] = 1; 
-			}
-		}
-	}
+    // Recorremos el inventario del rival para ver que tiene
+    for (int i = 0; i < 3; i++) {
+        for (int id = 1; id <= 5; id++) {
+            if (strcasecmp(rival->inventario[i].nombre, obtenerNombreDispositivo(id)) == 0) {
+                rivalTiene[id] = 1; 
+            }
+        }
+    }
 
-	// MOSTRAR SOLO DESCARTES
-	printf("\nDispositivos en el 'Vacio' (Descartes):\n");
-	int existenDescartes = 0;
-	
-	// Si es 0, es un descarte
-	for (int id = 1; id <= 5; id++) {
-		if (rivalTiene[id] == 0) { 
-			printf("%d. %s\n", id, obtenerNombreDispositivo(id));
-			existenDescartes++;
-		}
-	}
+    // MOSTRAR SOLO DESCARTES
+    printf("\nDispositivos en el 'Vacio' (Descartes):\n");
+    int existenDescartes = 0;
+    
+    // Si es 0, es un descarte
+    for (int id = 1; id <= 5; id++) {
+        if (rivalTiene[id] == 0) { 
+            printf("%d. %s\n", id, obtenerNombreDispositivo(id));
+            existenDescartes++;
+        }
+    }
 
-	// SELECCIONAR QUE RECUPERAR
-	int idRecuperar;
-	printf("Elige el ID del dispositivo a recuperar: ");
-	if (scanf("%d", &idRecuperar) != 1) return;
+    // SELECCIONAR QUE RECUPERAR
+    int idRecuperar;
+    printf("Elige el ID del dispositivo a recuperar: ");
+    if (scanf("%d", &idRecuperar) != 1) {
+        registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+        return;
+    }
 
-	// Validamos
-	if (idRecuperar < 1 || idRecuperar > 5 || rivalTiene[idRecuperar] == 1) {
-		printf("Error: Ese dispositivo no esta en el vacio (o no existe).\n");
-		registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
-		return;
-	}
+    // Validamos
+    if (idRecuperar < 1 || idRecuperar > 5 || rivalTiene[idRecuperar] == 1) {
+        printf("Error: Ese dispositivo no esta en el vacio (o no existe).\n");
+        registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+        return;
+    }
 
-	// SELECCIONAR QUE SE ROBA AL RIVAL
-	printf("\nInventario del Rival:\n");
-	for (int i = 0; i < 3; i++) {
-		if (rival->inventario[i].disponible)
-			printf("%d. %s\n", i + 1, rival->inventario[i].nombre);
-		else
-			printf("%d. [NO DISPONIBLE]\n", i + 1);
-	}
+    // SELECCIONAR QUE SE ROBA AL RIVAL
+    printf("\nInventario del Rival:\n");
+    for (int i = 0; i < 3; i++) {
+        if (rival->inventario[i].disponible)
+            printf("%d. %s\n", i + 1, rival->inventario[i].nombre);
+        else
+            printf("%d. [NO DISPONIBLE]\n", i + 1);
+    }
 
-	int slotRival;
-	printf("Elige el slot del rival a reemplazar (1-3): ");
-	scanf("%d", &slotRival);
-	int idxRival = slotRival - 1;
+    int slotRival;
+    printf("Elige el slot del rival a reemplazar (1-3): ");
+    if (scanf("%d", &slotRival) != 1) {
+        registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+        return;
+    }
+    int idxRival = slotRival - 1;
 
-	if (idxRival < 0 || idxRival > 2 || !rival->inventario[idxRival].disponible) {
-		printf("Error: Slot invalido o agotado.\n");
-		registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
-		return;
-	}
+    if (idxRival < 0 || idxRival > 2 || !rival->inventario[idxRival].disponible) {
+        printf("Error: Slot invalido o agotado.\n");
+        registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+        return;
+    }
 
-	// Ejecutar cambio
-	printf("Intercambio!!! !!El rival pierde %s y recibe %s. WOOOOOW\n", 
-		rival->inventario[idxRival].nombre, obtenerNombreDispositivo(idRecuperar));
+    // Ejecutar cambio
+    printf("Intercambio!!! !!El rival pierde %s y recibe %s. WOOOOOW\n", 
+        rival->inventario[idxRival].nombre, obtenerNombreDispositivo(idRecuperar));
 
-	// Sobreescribimos el nombre en el inventario del rival
-	strcpy(rival->inventario[idxRival].nombre, obtenerNombreDispositivo(idRecuperar));
-	
-	// Le asignamos el nivel por defecto correspondiente a la ID
-	rival->inventario[idxRival].nivel = idRecuperar; 
-	
-	// Marcar dispositivo nuevo como disponible
-	rival->inventario[idxRival].disponible = 1;
+    // Sobreescribimos el nombre en el inventario del rival
+    strcpy(rival->inventario[idxRival].nombre, obtenerNombreDispositivo(idRecuperar));
+    
+    // Le asignamos el nivel por defecto correspondiente a la ID
+    rival->inventario[idxRival].nivel = idRecuperar; 
+    
+    // Marcar dispositivo nuevo como disponible
+    rival->inventario[idxRival].disponible = 1;
 
-	// Registrar en log.
-	registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
+    // Registrar en log con información completa del intercambio
+    DeviceType dispositivoRecuperado = (DeviceType)idRecuperar;
+    DeviceType dispositivoPerdido = NONE;
+    
+    // Identificar el dispositivo que el rival pierde
+    for (int id = 1; id <= 5; id++) {
+        if (strcasecmp(rival->inventario[idxRival].nombre, obtenerNombreDispositivo(id)) == 0) {
+            dispositivoPerdido = (DeviceType)id;
+            break;
+        }
+    }
+    
+    registerCompleteAction(turno, 1, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, 
+        dispositivoRecuperado, dispositivoPerdido, NONE, 1);
 }
 
 
@@ -375,6 +400,7 @@ static int usar_Gaius_ia(int x, int y, int opcion, int turno) {
 
 	// Validar limites
 	if (x < 0 || x >= MAP_TEST_SIZE || y < 0 || y >= MAP_TEST_SIZE) {
+		registerCompleteAction(turno, 2, USE_DEVICE, GAIUS, x, y, 0, 0, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 
@@ -391,6 +417,7 @@ static int usar_Gaius_ia(int x, int y, int opcion, int turno) {
 	}
 	
 	else {
+		registerCompleteAction(turno, 2, USE_DEVICE, GAIUS, x, y, alturaActual, alturaActual, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 
@@ -404,6 +431,7 @@ static int usar_Gaius_ia(int x, int y, int opcion, int turno) {
 			alturaActual, mapa[y][x], 0, NONE, NONE, NONE, 1);
 		return 1;
 	}
+	registerCompleteAction(turno, 2, USE_DEVICE, GAIUS, x, y, alturaActual, alturaActual, 0, NONE, NONE, NONE, 0);
 	return 0;
 }
 
@@ -424,11 +452,13 @@ static int usar_Phalanx_ia(jugador *ia, int Dest_x, int Dest_y, int turno) {
 
 	// Validacion de limites
 	if (Dest_x< 0 || Dest_x >= MAP_TEST_SIZE || Dest_y < 0 || Dest_y >= MAP_TEST_SIZE) {
+		registerCompleteAction(turno, 2, USE_DEVICE, PHALANX, Dest_x, Dest_y, 0, 0, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 	
 	// No diagonales. Distancia Manhattan == 1
 	if (abs(ia->x - Dest_x) + abs(ia->y - Dest_y) != 1) {
+		registerCompleteAction(turno, 2, USE_DEVICE, PHALANX, Dest_x, Dest_y, 0, 0, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 	
@@ -437,11 +467,13 @@ static int usar_Phalanx_ia(jugador *ia, int Dest_x, int Dest_y, int turno) {
 
 	// Solo subida
 	if (h_Destino <= h_Origen) {
+		registerCompleteAction(turno, 2, USE_DEVICE, PHALANX, Dest_x, Dest_y, h_Origen, h_Destino, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 	
 	// Diferencia de alturas
 	if (h_Destino - h_Origen > 3) {
+		registerCompleteAction(turno, 2, USE_DEVICE, PHALANX, Dest_x, Dest_y, h_Origen, h_Destino, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 	
@@ -472,6 +504,7 @@ static int usar_Quadratus_ia(jugador *rival, int turno) {
 
 	// Si no hay disposi. disponibles falla
 	if (cantidad == 0) {
+		registerCompleteAction(turno, 2, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
 		return 0;
 	}
 
@@ -482,12 +515,21 @@ static int usar_Quadratus_ia(jugador *rival, int turno) {
 	// Bloquea
 	rival->inventario[slotA_Romper].disponible = 0;
 	
-	printf("IA Usa QUADRATUS. Ha bloqueado tu %s. DAAAAAAAMN\n", rival->inventario[slotA_Romper+1].nombre);
-	
-	// Registrar en log
-	registerCompleteAction(turno, 2, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, QUADRATUS, NONE, NONE, 1);
-	
-	return 1;
+	// Identificar el dispositivo bloqueado
+    DeviceType dispositivoBloqueado = NONE;
+    for (int id = 1; id <= 5; id++) {
+        if (strcasecmp(rival->inventario[slotA_Romper].nombre, obtenerNombreDispositivo(id)) == 0) {
+            dispositivoBloqueado = (DeviceType)id;
+            break;
+        }
+    }
+    
+    printf("IA Usa QUADRATUS. Ha bloqueado tu %s. DAAAAAAAMN\n", rival->inventario[slotA_Romper].nombre);
+    
+    // Registrar en log con el dispositivo correcto
+    registerCompleteAction(turno, 2, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, dispositivoBloqueado, NONE, NONE, 1);
+    
+    return 1;
 }
 
 static int usar_Argus_ia(jugador *ia, jugador *humano, int turno) {
@@ -545,13 +587,23 @@ static int usar_Argus_ia(jugador *ia, jugador *humano, int turno) {
 
 	printf("[IA] ARGUS: La IA ha reemplazado tu %s por un %s! WHAAAAT?\n", nombreViejo, nombreNuevo);
 
-	// Sobreescribir inventario
-	strcpy(humano->inventario[slotObjetivo].nombre, nombreNuevo);
-	humano->inventario[slotObjetivo].nivel = idA_Recuperar; // Asignamos nivel por defecto según ID
-	humano->inventario[slotObjetivo].disponible = 1; // El nuevo item llega listo para usar
+	// Identificar el dispositivo que se pierde
+    DeviceType dispositivoPerdido = NONE;
+    for (int id = 1; id <= 5; id++) {
+        if (strcasecmp(nombreViejo, obtenerNombreDispositivo(id)) == 0) {
+            dispositivoPerdido = (DeviceType)id;
+            break;
+        }
+    }
 
-	// Registrar en lof.
-	registerCompleteAction(turno, 2, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
+    // Sobreescribir inventario
+    strcpy(humano->inventario[slotObjetivo].nombre, nombreNuevo);
+    humano->inventario[slotObjetivo].nivel = idA_Recuperar;
+    humano->inventario[slotObjetivo].disponible = 1;
+
+    // Registrar en log con información completa
+    registerCompleteAction(turno, 2, USE_DEVICE, ARGUS, 0, 0, 0, 0, 0, 
+        (DeviceType)idA_Recuperar, dispositivoPerdido, NONE, 1);
 	
 	return 1;
 }

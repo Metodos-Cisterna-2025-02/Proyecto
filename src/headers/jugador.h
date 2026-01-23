@@ -8,7 +8,6 @@ int** mapa;
 /* Prototipos de funciones estáticas */
 static int mover_jugador(jugador *j, char direccion, int turno);
 static int es_movimiento_valido(jugador *j, int nx, int ny);
-static void usardispositivojugador(int turno, jugador *j, jugador *oponente);
 
 /* Definiciones de funciones */
 
@@ -68,6 +67,7 @@ static int mover_jugador(jugador *j, char direccion, int turno) {
 		j->y = ny;
 		j->h = mapa[ny][nx];
 		registerSimpleAction(turno, 1, mov, nx, ny, 1);
+
 		return 1;
 	}
 
