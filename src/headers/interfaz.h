@@ -1,27 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "log.h"
+#ifndef INTERFAZ_H
+#define INTERFAZ_H
 
-/* estructura dispositivos */
-typedef struct {
-	char nombre[16];
-	int disponible; /* disponible = 1 esta disponible, disponible = 0 no esta disponible */
-	int nivel;
-} dispositivousuario;
+#include "definiciones.h"
 
-/* prototipos de funciones */
-char pedirmovimiento(int turno);
-int mostrarmenuturno(int turno, int yausodispositivo);
-int realizarsorteocarasello();
-void seleccionardispositivos(dispositivousuario misdispositivos[]);
-void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad);
-void usardispositivo(dispositivousuario *disp);
-void turnodeia(int turno);
+/* Definiciones de Funciones */
 
-/* definiciones de funciones */
-
-/* pide una opcion entre wasd al usuario */
+/* Pide una opcion entre W, A, S, D al usuario */
 char pedirmovimiento(int turno) {
 	char tecla;
 	int esvalida = 0; 
@@ -68,45 +52,21 @@ char pedirmovimiento(int turno) {
 
 int mostrarmenuturno(int turno, int yausodispositivo) {
 	int opcion;
-	int esvalida = 0;
 	int leidos;
 
 	printf("\n   MENU DE TURNO    \n");
+
 	printf("1. Moverse\n");
-	if (yausodispositivo == 0) {
-		printf("2. Usar Dispositivo\n");
-	} else {
-		printf("2. Ya usaste un dispositivo durante este turno\n");
-	}
-	printf("3. Rendirse\n");
+	printf(yausodispositivo == 0 ? "2. Usar Dispositivo\n" : "2. [Dispositivo usado]\n");
+	printf("3. Rendirse\n");	
+	printf("Elige una opcion: ");
+	
+	leidos = scanf("%d", &opcion);
 
-	while (!esvalida) {
-		printf("Elige una opcion: ");
-		leidos = scanf("%d", &opcion);
+	if (leidos != 1) {
+		while (getchar() != '\n'); // Limpiar buffer
 
-		if (leidos != 1) {
-			printf("Entrada invalida. Debe ser un numero.\n");
-			while (getchar() != '\n')
-				continue;
-		}
-
-		if (opcion == 1) {
-			esvalida = 1;
-			pedirmovimiento(turno);
-		}
-		else if (opcion == 2 && yausodispositivo == 0) {
-			esvalida = 1;
-			// Aquí se llamaría a la función para usar un dispositivo
-			// Por ahora solo registramos la acción de usar dispositivo genérico
-			registerCompleteAction(turno, 1, USE_DEVICE, GAIUS, 0, 0, 0, 0, 0,
-								NONE, NONE, NONE, esvalida);
-		}
-		else if (opcion == 3) {
-			esvalida = 1;
-			registerSimpleAction(turno, 1, SURRENDER, 0, 0, esvalida);
-		}
-		else
-			printf("Opcion no permitida.\n");
+		return -1;
 	}
 
 	return opcion;
@@ -194,10 +154,28 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
 	}
 }
 
-void usardispositivo(dispositivousuario *disp) {
+void usardispositivo(int turno, dispositivousuario *disp) {
+	DeviceType dispositivo_tipo;
+	
+	/* Convertir nombre de dispositivo a DeviceType para registro */
+	char* dispositivo_nombre = disp->nombre;
+	if (strcmp(dispositivo_nombre, "Gaius") == 0)
+		dispositivo_tipo = GAIUS;
+	else if (strcmp(dispositivo_nombre, "Quadratus") == 0)
+		dispositivo_tipo = QUADRATUS;
+	else if (strcmp(dispositivo_nombre, "Hydrus") == 0)
+		dispositivo_tipo = HYDRUS;
+	else if (strcmp(dispositivo_nombre, "Phalanx") == 0)
+		dispositivo_tipo = PHALANX;
+	else if (strcmp(dispositivo_nombre, "Argus") == 0)
+		dispositivo_tipo = ARGUS;
+	else
+		dispositivo_tipo = NONE;
 
 	if (disp->disponible == 0) {
 		printf("El dispositivo ya fue usado.\n");
+		registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
+								NONE, NONE, NONE, 0);
 		return;
 	}
 
@@ -208,15 +186,21 @@ void usardispositivo(dispositivousuario *disp) {
 
 	// Aquí se registraría la acción específica del dispositivo y se llamaría a su función
 	// Por ahora solo registramos el uso genérico
-	registerCompleteAction(0, 1, USE_DEVICE, GAIUS, 0, 0, 0, 0, 0,
+	registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
 							NONE, NONE, NONE, 1);
 }
 
 void turnodeia(int turno) {
 	printf("\n--- TURNO DE LA IA ---\n");
+
+	DeviceType dispositivo_tipo = NONE; // Dispositivo genérico usado por la IA
+
 	// Aquí se llamaría las funciones para la lógica de la IA
 	// Por mientras, hacemos un registro de turno genérico
-	registerCompleteAction(turno, 2, USE_DEVICE, GAIUS, 0, 0, 0, 0, 0,
-								NONE, NONE, NONE, 1);
+	registerCompleteAction(turno, 2, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
+		NONE, NONE, NONE, 1);
+	
 	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
 }
+
+#endif
