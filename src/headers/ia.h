@@ -6,7 +6,7 @@
 int **mapa;
 
 
-//ola
+//funciones
 
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd) {
 	return distanceTo(xStart, yStart, xEnd, yEnd);
