@@ -60,7 +60,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 			while (getchar() != '\n');
 			getchar(); 
 		}
-		return; // FIN DEL TURNO 
+		return; // FIN DEL TURNO POSIBLE 1
 	}
 
 	// 2. Existe camino valido? (BFS)
@@ -73,7 +73,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 		return;
     	}
 
-    	// Jugador esta mas cerca o igual??
+    	// Jugador esta mas cerca o igual??                 DISPP
 	if (pj_dist <= ia_dist && tiene_items) {
 		printf(" [IA] El jugador esta mas cerca o igual. Atacando...\n");
 		activar_dispositivo(turno, 2, ia, jugador);
@@ -91,9 +91,9 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 		int yOld = ia->y;
 		int hOld = mapa[ia->y][ia->x];
 		ActionType mov;
-		if (ia->x - nx == -1) // x - (x + 1) = -1
+		if (ia->x - nx == -1) 
 			mov = MOVE_RIGHT;
-		else if (ia->x - nx == 1) // x - (x - 1) = 1
+		else if (ia->x - nx == 1) 
 			mov = MOVE_LEFT;
 		else if (ia->y - ny == -1)
 			mov = MOVE_DOWN;
@@ -110,7 +110,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 
 		registerSimpleAction(turno, 2, mov, nx, ny, exito);
 	} else {
-		// TODO: IA no encontró camino, implementar lógica de rendición de IA
+		// TODO: IA no encontró camino, SE RINDEE
 		ia->rendido = 1;
 
 		printf("IA no encontro un camino valido hacia la meta.\n");
@@ -123,7 +123,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 
 void seleccionardispositivosIA(dispositivousuario inventarioIA[], dispositivousuario inventarioJugador[], int sorteo) {
 	int eleccion1, eleccion2, eleccion3;
-
+//logica eleccion IA
 	char *nombredispositivos[] = {"Gaius","Quadratus","Hydrus","Phalanx","Argus"};
 	if (sorteo == 0) {
 		eleccion1=(rand()%5)+1;
