@@ -23,57 +23,87 @@ int ia_siguiente_paso(int xStart, int yStart, int xEnd, int yEnd, int *nx, int *
 	return 1;
 }
 
-void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
-	if (!mapa)
-		mapa = getMap();
 
-	int exito;
-
-	int nx, ny;
-	int puede_moverse = ia_siguiente_paso(ia->x, ia->y, metaX, metaY, &nx, &ny);
-
-	printf("\n--- TURNO IA ---\n");
-
-	if (ia->bloqueado == 1) {
-		printf("IA esta bloqueada (Hydrus activo)\n");
-		ia->bloqueado = 0; 
-		exito = 0;
-
-        	return;
-	}
-
-	if (puede_moverse) {
-		printf("IA se mueve de (%d, %d, %d) a (%d, %d, %d)\n", ia->x, ia->y, ia->h, nx, ny, mapa[ny][nx]);
-        
-		ActionType mov;
-		if (ia->x - nx == -1) // x - (x + 1) = -1
-		mov = MOVE_RIGHT;
-		else if (ia->x - nx == 1) // x - (x - 1) = 1
-		mov = MOVE_LEFT;
-		else if (ia->y - ny == -1)
-		mov = MOVE_DOWN;
-		else if (ia->y - ny == 1)
-		mov = MOVE_UP;
-		
-		ia->x = nx;
-		ia->y = ny;
-		ia->h = mapa[ny][nx];
-
-		exito = 1;
-
-		registerSimpleAction(turno, 2, mov, nx, ny, exito);
-	} else {
-		// TODO: IA no encontró camino, implementar lógica de rendición de IA
-		ia->rendido = 1;
-
-		printf("IA no encontro un camino valido hacia la meta.\n");
-		registerSimpleAction(turno, 2, SURRENDER, ia->x, ia->y, 1);
-	}
+//revisamos dispos
+int ia_tiene_dispositivos(jugador *ia) {
+    for (int i = 0; i < 3; i++) {
+        if (ia->inventario[i].disponible == 1) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 
 
+void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
+	if (!mapa) mapa = getMap();
 
+	int nx, ny;
+	int ia_dist = ia_distancia_objetivo(ia->x, ia->y, metaX, metaY);
+	int pj_dist = ia_distancia_objetivo(jugador->x, jugador->y, metaX, metaY);
+	int tiene_items = ia_tiene_dispositivos(ia);
+
+	printf("\n--- TURNO IA (Turno %d) ---\n", turno);
+
+	// Bloqueo x hydrus?
+	if (ia->bloqueado == 1) {
+        	printf(" [ESTADO] IA bloqueada por Hydrus.\n");
+        	ia->bloqueado = 0; // Se libera el bloqueo para el proximo turno
+        
+		if (tiene_items) {
+			printf(" [IA] Decide usar un dispositivo aunque no puede moverse...\n");
+			activar_dispositivo(turno, 2, ia, jugador);
+		
+			// PAUSA PARA VISIBILIDAD
+			printf("\n (PAUSA)Presiona Enter para continuar...");
+			while (getchar() != '\n');
+			getchar(); 
+		}
+		return; // FIN DEL TURNO 
+	}
+
+	// 2. Existe camino valido? (BFS)
+	if (ia_dist == -1) {
+		printf(" [IA] No hay camino a la meta. ME RINDO PIPIPIPIPI.\n");      	
+		ia->rendido = 1;
+        	
+		registerSimpleAction(turno, 2, SURRENDER, ia->x, ia->y, 1);
+		
+		return;
+    	}
+
+    	// Jugador esta mas cerca o igual??
+	if (pj_dist <= ia_dist && tiene_items) {
+		printf(" [IA] El jugador esta mas cerca o igual. Atacando...\n");
+		activar_dispositivo(turno, 2, ia, jugador);
+        
+        	// PAUSA PARA VISIBILIDAD
+        	printf("\n(PAUSA) Presiona Enter para continuar...");
+        	while (getchar() != '\n');
+        	getchar();
+	}
+
+	//Mover hacia objetivo 
+	int puede_moverse = ia_siguiente_paso(ia->x, ia->y, metaX, metaY, &nx, &ny);
+	if (puede_moverse) {
+		ActionType mov;
+        	if (nx > ia->x) mov = MOVE_RIGHT;
+        	else if (nx < ia->x) mov = MOVE_LEFT;
+        	else if (ny > ia->y) mov = MOVE_DOWN;
+        	else mov = MOVE_UP;
+
+        	printf(" [IA] Avanzando hacia la meta...!!!!!!!\n");
+        	ia->x = nx;
+        	ia->y = ny;
+        	ia->h = mapa[ny][nx];
+        
+        	registerSimpleAction(turno, 2, mov, nx, ny, 1);
+	}
+}
+
+
+//inicio algoritmo de como la ia selecciona los disp
 void  seleccionardispositivosIA(dispositivousuario inventarioIA[],dispositivousuario inventarioJugador[],int sorteo) {
 	int eleccion1, eleccion2, eleccion3;
 
