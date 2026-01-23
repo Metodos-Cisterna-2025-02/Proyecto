@@ -10,18 +10,12 @@
 
 static const char* obtenerNombreDispositivo(int id) {
     switch(id) {
-        case GAIUS:
-			return "Gaius";
-        case QUADRATUS:
-			return "Quadratus";
-        case HYDRUS:
-			return "Hydrus";
-        case PHALANX: 
-			return "Phalanx";
-        case ARGUS: 
-			return "Argus";
-        default: 
-			return "Desconocido";
+        case GAIUS: return "Gaius";
+        case QUADRATUS: return "Quadratus";
+        case HYDRUS: return "Hydrus";
+        case PHALANX: return "Phalanx";
+        case ARGUS: return "Argus";
+        default: return "Desconocido";
     }
 }
 

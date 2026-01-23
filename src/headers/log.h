@@ -1,71 +1,9 @@
 #ifndef ACTION_LOG_H
 #define ACTION_LOG_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
-// Tipos de dispositivos
-typedef enum {
-	NONE = 0,       // Sin dispositivo
-	GAIUS = 1,      // Cambio de altura en mapa
-	QUADRATUS = 2,  // Bloquear dispositivo enemigo
-	HYDRUS = 3,     // Congelación de jugador
-	PHALANX = 4,    // Subir hasta 3 niveles de altura hacia arriba
-	ARGUS = 5       // Intercambio de dispositivos
-} DeviceType;
-
-// Tipos de acciones
-typedef enum {
-	COIN_FLIP = 0,     // C: Sorteo de moneda (cara/sello)
-	SELECT_DEVICE = 1, // S: Selección de dispositivo (pre-juego)
-	MOVE_UP = 2,       // N: Movimiento hacia arriba
-	MOVE_DOWN = 3,     // S: Movimiento hacia abajo
-	MOVE_LEFT = 4,     // W: Movimiento hacia la izquierda
-	MOVE_RIGHT = 5,    // E: Movimiento hacia la derecha
-	USE_DEVICE = 6,    // U: Uso de dispositivo
-	SURRENDER = 7,     // X: Rendirse
-} ActionType;
-
-// Estructura para registrar efectos especiales
-typedef struct {
-	int turn;                 // Número del turno
-	int player;               // 1 (jugador) o 2 (IA)
-	ActionType actionType;    // Tipo de acción
-	DeviceType device;        // Dispositivo usado (si aplica)
-	int targetX;              // Coordenada X afectada (si aplica)
-	int targetY;              // Coordenada Y afectada (si aplica)
-	int previousValue;        // Altura anterior (para cambios de altura)
-	int newValue;             // Altura nueva (para cambios de altura)
-	int frozenTurns;          // Turnos restantes congelado (si aplica)
-	DeviceType blockedDevice; // Dispositivo bloqueado (Quadratus)
-	DeviceType swapDevice1;   // Primer dispositivo intercambiado (Argus)
-	DeviceType swapDevice2;   // Segundo dispositivo intercambiado (Argus)
-	int coinChoice;           // Elección del jugador: 1=Cara, 2=Sello
-	int coinResult;           // Resultado del sorteo: 1=Cara, 2=Sello
-	DeviceType selectedDevice;// Dispositivo seleccionado (pre-juego)
-	int selectionOrder;       // Orden de selección: 1, 2 o 3
-	int successful;           // 1: exitoso, 0: fallido
-	time_t timestamp;         // Timestamp de la acción
-} Action;
+#include "definiciones.h"
 
 static FILE* logFile;
-
-// prototipos de funciones
-static void createLogFile();
-static char* actionToNotation(Action *action);
-void registerCompleteAction(int turn, int player, ActionType actionType,
-                                                        DeviceType device, int x, int y,
-                                                        int prevValue, int newVal, int turns,
-                                                        DeviceType blocked, DeviceType swap1, DeviceType swap2,
-                                                        int successful);
-void registerSimpleAction(int turn, int player, ActionType actionType,
-                                                 int x, int y, int successful);
-void registerCoinFlip(int player, int choice, int result);
-void registerDeviceSelection(int player, DeviceType device, int order);
-
-
 
 /* Crea un archivo de log con formato game_YYYYMMDD_HHMMSS.log */
 static void createLogFile() {
@@ -105,23 +43,27 @@ static void createLogFile() {
 // "6.J2:X" = Turno 6, Jugador 2, Rendición
 static char* actionToNotation(Action *action) {
 	static char notation[50];
-	char typeChar[] = {'N', 'S', 'W', 'E', 'U', 'X'};
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X'};
 	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
-	
+
 	// Verificar si es un uso de dispositivo
 	if (action->actionType == USE_DEVICE) {
 		if (action->device == HYDRUS) {
 			// Congelación: "3.J1:H(4,6)->1t+"
 			// (jugador congelado durante 1 turno, exitoso)
-			sprintf(notation, "%d.J%d:%c(%d,%d)->%dt%c",
+			sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c(%d,%d)->%dt%c",
+					t->tm_hour, t->tm_min, t->tm_sec,
 					action->turn, action->player, deviceChar[action->device],
 					action->targetX, action->targetY,
 					action->frozenTurns, result);
 		}
 		else if (action->device == GAIUS) {
 			// Cambio de altura: "4.J2:G(3,2):0->1+"
-			sprintf(notation, "%d.J%d:%c(%d,%d):%d->%d%c",
+			sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c(%d,%d):%d->%d%c",
+					t->tm_hour, t->tm_min, t->tm_sec,
 					action->turn, action->player, deviceChar[action->device],
 					action->targetX, action->targetY,
 					action->previousValue, action->newValue, result);
@@ -129,27 +71,31 @@ static char* actionToNotation(Action *action) {
 		else if (action->device == QUADRATUS) {
 			// Bloqueo de dispositivo: "4.J2:Q[P]+"
 			// (bloquea dispositivo Phalanx del enemigo)
-			sprintf(notation, "%d.J%d:%c[%c]%c",
+			sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c[%c]%c",
+					t->tm_hour, t->tm_min, t->tm_sec,	
 					action->turn, action->player, deviceChar[action->device],
 					deviceChar[action->blockedDevice], result);
 		}
 		else if (action->device == ARGUS) {
 			// Intercambio de dispositivos: "5.J1:A[G<->H]+"
 			// (intercambia Gaius por Hydrus)
-			sprintf(notation, "%d.J%d:%c[%c<->%c]%c",
+			sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c[%c<->%c]%c",
+					t->tm_hour, t->tm_min, t->tm_sec,
 					action->turn, action->player, deviceChar[action->device],
 					deviceChar[action->swapDevice1], deviceChar[action->swapDevice2],
 					result);
 		}
 		else {
 			// Otros dispositivos (Phalanx)
-			sprintf(notation, "%d.J%d:%c%c",
+			sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c%c",
+					t->tm_hour, t->tm_min, t->tm_sec,
 					action->turn, action->player, deviceChar[action->device], result);
 		}
 	}
 	else if (action->actionType == SURRENDER) {
 		// Rendición: "6.J2:X"
-		sprintf(notation, "%d.J%d:%c",
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c",
+				t->tm_hour, t->tm_min, t->tm_sec,
 				action->turn, action->player, typeChar[action->actionType]);
 	}
 	else if (action->actionType == COIN_FLIP) {
@@ -158,21 +104,24 @@ static char* actionToNotation(Action *action) {
 		char choiceChar = (action->coinChoice == 1) ? 'C' : 'S';
 		char resultChar = (action->coinResult == 1) ? 'C' : 'S';
 		char outcome = action->successful ? '+' : '-';
-		sprintf(notation, "%d.J%d:COIN[%c]->%c%c",
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:COIN[%c]->%c%c",
+				t->tm_hour, t->tm_min, t->tm_sec,
 				action->turn, action->player, choiceChar, resultChar, outcome);
 	}
 	else if (action->actionType == SELECT_DEVICE) {
 		// Selección de dispositivo: "0.J1:SELECT[G]#1"
 		// selectedDevice: GAIUS, QUADRATUS, etc.; order: 1, 2, 3
 		char deviceChar[] = {'X', 'G', 'Q', 'H', 'P', 'A'}; // X para NONE
-		sprintf(notation, "%d.J%d:SELECT[%c]#%d",
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:SELECT[%c]#%d",
+				t->tm_hour, t->tm_min, t->tm_sec,
 				action->turn, action->player, 
 				deviceChar[action->selectedDevice], 
 				action->selectionOrder);
 	}
 	else {
 		// Movimiento normal
-		sprintf(notation, "%d.J%d:%c(%d,%d)%c",
+		sprintf(notation, "[%02d:%02d:%02d] %d.J%d:%c(%d,%d)%c",
+				t->tm_hour, t->tm_min, t->tm_sec,
 				action->turn, action->player, typeChar[action->actionType],
 				action->targetX, action->targetY, result);
 	}
