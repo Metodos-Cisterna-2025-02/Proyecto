@@ -130,8 +130,9 @@ void turnodeia(int turno);
 /* ==================== PROTOTIPOS DE JUGADOR.H ==================== */
 void turno_jugador(jugador *j, jugador *oponente, int turno);
 
+
 /* ==================== PROTOTIPOS DE DISPOSITIVOS.H ==================== */
-void usardispositivojugador(int turno, jugador *j, jugador *oponente);
+// void usardispositivojugador(int turno, jugador *j, jugador *oponente);
 
 /* ==================== PROTOTIPOS DE IA.H ==================== */
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd);

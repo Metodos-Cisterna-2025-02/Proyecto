@@ -5,10 +5,6 @@
 
 static FILE* logFile;
 
-/* Prototipos de funciones estáticas */
-static void createLogFile();
-static char* actionToNotation(Action *action);
-
 /* Crea un archivo de log con formato game_YYYYMMDD_HHMMSS.log */
 static void createLogFile() {
         if (logFile != NULL) {

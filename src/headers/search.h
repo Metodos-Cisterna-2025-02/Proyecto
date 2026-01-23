@@ -8,11 +8,14 @@ static int visited[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentX[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentY[MAX_VERTICAL][MAX_HORIZONTAL];
 
-/* Prototipos de funciones estáticas */
-static void search(int xStart, int yStart, int xEnd, int yEnd);
-static void posSet(struct pos* target, int xPos, int yPos, int height);
-
 /* Definiciones de funciones */
+
+static void posSet(struct pos* target, int xPos, int yPos, int height) {
+	target->x = xPos;
+	target->y = yPos;
+	target->h = height;
+}
+
 static void search(int xStart, int yStart, int xEnd, int yEnd) {
 	searchMap = getMap(); 
 
@@ -106,12 +109,6 @@ int distanceTo(int xStart, int yStart, int xEnd, int yEnd) {
 		d++;
 	}
 	return d;
-}
-
-static void posSet(struct pos* target, int xPos, int yPos, int height) {
-	target->x = xPos;
-	target->y = yPos;
-	target->h = height;
 }
 
 int posGetX(struct pos target) { return target.x; }
