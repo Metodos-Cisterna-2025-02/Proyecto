@@ -1,13 +1,18 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import time
+import os
+
+# Obtener ruta absoluta del directorio del script
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+INTERFAZ_PATH = os.path.join(SCRIPT_DIR, 'interfaz.txt')
 
 etiquetas_all = []
 ventana = tk.Tk()
 ventana.title('GAME')
 
 def actualizar_contenido():
-	with open('interfaz.txt', 'r') as archivo:
+	with open(INTERFAZ_PATH, 'r') as archivo:
 		data = archivo.readlines()
 		version = data.pop(0)
 		size = data.pop(0).strip().split(',')
@@ -40,7 +45,7 @@ def actualizar_contenido():
 
 def cargar_interfaz():
 	try:
-		with open('interfaz.txt', 'r') as archivo:
+		with open(INTERFAZ_PATH, 'r') as archivo:
 			# Leer el número de interfaz
 			numero_interfaz = int(archivo.readline().strip())
 
@@ -78,8 +83,10 @@ def cargar_interfaz():
 		ventana.after(200, actualizar_contenido)
 		ventana.mainloop()
 
-	except FileNotFoundError:
-			print("No se pudo encontrar el archivo 'interfaz.txt'.")
+	except FileNotFoundError as e:
+		print(f"Error: {e}")
+	except Exception as e:
+		print(f"Error inesperado: {e}")
 
 cargar_interfaz()
 
