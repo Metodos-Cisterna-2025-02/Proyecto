@@ -93,14 +93,13 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 			}
 		}
 		else if (opcion == 2) {
-		if (yaUsoDispositivo) {
-                printf("Ya has usado un dispositivo este turno.\n");
-            } else {
-               
-                activar_dispositivo(turno, 1, j, oponente);
-                yaUsoDispositivo = 1;
-            }
-        }
+			if (yaUsoDispositivo) {
+				printf("Ya has usado un dispositivo este turno.\n");
+			} else {
+				activar_dispositivo(turno, 1, j, oponente);
+				yaUsoDispositivo = 1;
+			}
+		}
 		else if (opcion == 3) {
 			registerSimpleAction(turno, 1, SURRENDER, 0, 0, 1);
 			j->rendido = 1;
