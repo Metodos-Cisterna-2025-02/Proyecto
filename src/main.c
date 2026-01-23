@@ -70,6 +70,9 @@ int main(int argc, char *argv[]) {
 	player.rendido = 0;
 	player.puedeSubir3 = 0;
 
+	
+	
+
 	jugador ia;
 	ia.x = 0;
 	ia.y = 7;
@@ -81,7 +84,20 @@ int main(int argc, char *argv[]) {
 	initializeInterface(player.x, player.y, ia.x, ia.y, metaX, metaY);
 
 	printf("--- BIENVENIDO AL PROYECTO DE PROGRAMACION ---\n");
-	seleccionardispositivos(player.inventario);
+
+	int sorteo = realizarsorteocarasello();
+
+	if (sorteo==1) {
+		printf("\nGanaste el sorteo - Eliges tus dispositivos primero.\n");      
+		
+		seleccionardispositivos(player.inventario);
+        	seleccionardispositivosIA(ia.inventario, player.inventario, 1);
+	} else {
+		printf("\nPerdiste - La IA elige sus dispositivos primero.\n");
+        
+		seleccionardispositivosIA(ia.inventario, player.inventario, 0);
+		seleccionardispositivos(player.inventario);
+	}
 
 	int turno = 1;
 	int juegoTerminado = 0;
