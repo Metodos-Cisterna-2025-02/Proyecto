@@ -1,24 +1,7 @@
 #ifndef DISPOSITIVOS_H
 #define DISPOSITIVOS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "log.h"
-
-typedef struct {
-	int x;
-	int y;
-	int h;
-	dispositivousuario inventario[3];
-	int bloqueado;
-	int rendido;
-	int puedeSubir3; 
-} jugador;
-
-/* Prototipos de Funciones */
-
-void usardispositivojugador(int turno, jugador *j, jugador *oponente);
-
+#include "definiciones.h"
 
 /* Definiciones de Funciones */
 

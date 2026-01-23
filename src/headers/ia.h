@@ -1,21 +1,13 @@
 #ifndef IA_H
 #define IA_H
 
-#include <stdio.h>
-#include "search.h"
-#include "jugador.h"
-#include "log.h"
+#include "definiciones.h"
+
 
 int **mapa;
 
-/* Prototipos de Funciones */
 
-int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd);
-int ia_siguiente_paso(int xStart, int yStart, int xEnd, int yEnd, int *nx, int *ny);
-void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno);
-
-
-/* Definicines de Funciones */
+/* Definiciones de Funciones */
 
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd) {
 	return distanceTo(xStart, yStart, xEnd, yEnd);
@@ -67,10 +59,16 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 		ia->x = nx;
 		ia->y = ny;
 		ia->h = mapa[ny][nx];
+		
+		exito = 1;
 
-		registerSimpleAction(turno, 2, mov, nx, ny, 1);
+		registerSimpleAction(turno, 2, mov, nx, ny, exito);
 	} else {
+		// TODO: IA no encontró camino, implementar lógica de rendición de IA
+		ia->rendido = 1;
+
 		printf("IA no encontro un camino valido hacia la meta.\n");
+		registerSimpleAction(turno, 2, SURRENDER, ia->x, ia->y, 1);
 	}
 }
 

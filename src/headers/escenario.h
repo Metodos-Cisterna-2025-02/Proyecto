@@ -1,15 +1,7 @@
 #ifndef ESCENARIO_H
 #define ESCENARIO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "search.h"
-
-/* Prototipos de funciones */
-
-void generar_escenario(int escenario[8][8]);
-void coordenadas_inicio(int *x, int *y, int x_meta, int y_meta);
-
+#include "definiciones.h"
 
 /* Definiciones de funciones */
 

@@ -2,11 +2,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "headers/definiciones.h"
 #include "headers/io.h"
 #include "headers/interfaz.h"
 #include "headers/jugador.h"
 #include "headers/search.h"
 #include "headers/ia.h"
+#include "headers/log.h"
+#include "headers/dispositivos.h"
 
 int** mapa;
 

@@ -1,28 +1,11 @@
 #ifndef JUGADOR_H
 #define JUGADOR_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "interfaz.h"
-#include "log.h"
-#include "dispositivos.h"
-
-
-typedef struct {
-	int x;
-	int y;
-	int h;
-	dispositivousuario inventario[3];
-	int bloqueado;
-	int rendido;
-	int puedeSubir3;
-} jugador;
+#include "definiciones.h"
 
 int** mapa;
 
-/* Prototipos de funciones */
-
-void turno_jugador(jugador *j, jugador *oponente, int turno);
+/* Prototipos de funciones estáticas */
 static int mover_jugador(jugador *j, char direccion);
 static int es_movimiento_valido(jugador *j, int nx, int ny);
 

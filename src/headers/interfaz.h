@@ -1,29 +1,7 @@
 #ifndef INTERFAZ_H
 #define INTERFAZ_H
 
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "log.h"
-
-/* Estructura Dispositivos */
-typedef struct {
-	char nombre[16];
-	int disponible; /* disponible = 1 esta disponible, disponible = 0 no esta disponible */
-	int nivel;
-} dispositivousuario;
-
-/* Prototipos de Funciones */
-
-char pedirmovimiento(int turno);
-int mostrarmenuturno(int turno, int yausodispositivo);
-int realizarsorteocarasello();
-void seleccionardispositivos(dispositivousuario misdispositivos[]);
-void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad);
-void usardispositivo(int turno, dispositivousuario *disp);
-void turnodeia(int turno);
+#include "definiciones.h"
 
 /* Definiciones de Funciones */
 
@@ -85,9 +63,11 @@ int mostrarmenuturno(int turno, int yausodispositivo) {
 	
 	leidos = scanf("%d", &opcion);
 
-	if (leidos != 1)
+	if (leidos != 1) {
 		while (getchar() != '\n'); // Limpiar buffer
-			return -1;
+
+		return -1;
+	}
 
 	return opcion;
 }

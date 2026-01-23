@@ -1,34 +1,16 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "io.h"
-
-#define MAX_DIFF 2
-#define MAX_DEPTH 1024
-
-struct pos {
-	int x;
-	int y;
-	int h;
-};
+#include "definiciones.h"
 
 static int** searchMap = NULL; 
 static int visited[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentX[MAX_VERTICAL][MAX_HORIZONTAL];
 static int parentY[MAX_VERTICAL][MAX_HORIZONTAL];
 
-/* Prototipos de funciones */
-int distanceTo(int xStart, int yStart, int xEnd, int yEnd);
-struct pos* getNext(int xStart, int yStart, int xEnd, int yEnd);
-int posGetX(struct pos target);
-int posGetY(struct pos target);
-int posGetH(struct pos target);
+/* Prototipos de funciones estáticas */
 static void search(int xStart, int yStart, int xEnd, int yEnd);
 static void posSet(struct pos* target, int xPos, int yPos, int height);
-
 
 /* Definiciones de funciones */
 static void search(int xStart, int yStart, int xEnd, int yEnd) {

@@ -1,13 +1,7 @@
-
 #ifndef MINIJUEGOS_H
-#define MINIJUEGOS_H  // por si no existe
+#define MINIJUEGOS_H
 
-
-#include <stdio.h>
-#include <stdlib.h>  // aca se incluyen numeros randoms
-#include <time.h> //Para q funcionen bien los numeros random
-
-#include "minijuegos.h"
+#include "definiciones.h"
 
 // Para asegurar la portabilidad y compatibilidad de WINDOWS y UNIX
 #ifdef _WIN32  // Si es Windows
@@ -17,17 +11,10 @@
 	#include <unistd.h>
 #endif
 
-
-
-/* Prototipos de Funciones */
-
-int ejecutarMinijuego(int numeroUso, int jugador); 
+/* Prototipos de funciones estáticas */
 static int minijuego1(int jugador);
 static int minijuego2(int jugador); 
 static int minijuego3(int jugador); 
-
-
-
 
 // MINIJUEGO 1 - Numero al azar del 1 al 3
 //Variable "jugador" se refiere a 0 = Usuario y 1 = IA
