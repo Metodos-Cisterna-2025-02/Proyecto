@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
 
 	// Crear mapa dinámico sin leer del archivo
 	if (!mapa) {
-		mapa = (int**)malloc(MAP_TEST_SIZE * sizeof(int*));
+		mapa = (int**) malloc(MAP_TEST_SIZE * sizeof(int*));
 		for (int i = 0; i < MAP_TEST_SIZE; i++) {
-			mapa[i] = (int*)malloc(MAP_TEST_SIZE * sizeof(int));
+			mapa[i] = (int*) malloc(MAP_TEST_SIZE * sizeof(int));
 		}
 	}
 
