@@ -7,12 +7,14 @@
 #include <time.h>
 #include <math.h>
 
+
+
 /* ==================== DEFINES DE IO.H ==================== */
 
 /* Definiciones de mapa */
 
-#define MAX_VERTICAL 8
-#define MAX_HORIZONTAL 8
+#define MAX_VERTICAL 32
+#define MAX_HORIZONTAL 32
 #define MAX_HEIGHT 5
 #define MIN_HEIGHT 0
 #define MAP_TEST "maps/map_test.txt"
@@ -20,16 +22,17 @@
 
 /* Definiciones de interfaz */
 
-#define INTERFACE_FILE "interface/interface.txt"
-#define HEIGHT0 "/media/height0.png"
-#define HEIGHT1 "/media/height1.png"
-#define HEIGHT2 "/media/height2.png"
-#define HEIGHT3 "/media/height3.png"
-#define HEIGHT4 "/media/height4.png"
-#define HEIGHT5 "/media/height5.png"
-#define OUT_OF_BOUNDS "/media/out_of_bounds.png"
-#define PLAYER_ICON "/media/protoman.png"
-#define BOT_ICON "/media/rockman.png"
+#define INTERFACE_FILE "interfaz.txt"
+#define INTERFACE_TMP_FILE "interfaz_tmp.txt"
+#define HEIGHT0 "media/height_0.png"
+#define HEIGHT1 "media/height_1.png"
+#define HEIGHT2 "media/height_2.png"
+#define HEIGHT3 "media/height_3.png"
+#define HEIGHT4 "media/height_4.png"
+#define HEIGHT5 "media/height_5.png"
+#define OUT_OF_BOUNDS "media/out_of_bounds.png"
+#define PLAYER_ICON "media/protoman.png"
+#define BOT_ICON "media/rockman.png"
 #define MAX_LINE_LENGTH 256
 
 /* ==================== DEFINES DE SEARCH.H ==================== */
@@ -117,6 +120,10 @@ int** writeMap(int x, int y, int value);
 int** getMap();
 void freeMap();
 void printMap();
+void initializeInterface(int xPlayer, int yPlayer, int xAI, int yAI, int xGoal, int yGoal);
+void updateInterfaceHeight(int x, int y, int h);
+void updateInterfacePlayer(int xOld, int yOld, int hOld, int xPlayer, int yPlayer);
+void updateInterfaceAI(int xOld, int yOld, int hOld, int xAI, int yAI);
 
 /* ==================== PROTOTIPOS DE INTERFAZ.H ==================== */
 char pedirmovimiento(int turno);
@@ -132,7 +139,6 @@ void turno_jugador(jugador *j, jugador *oponente, int turno);
 
 
 /* ==================== PROTOTIPOS DE DISPOSITIVOS.H ==================== */
-// void usardispositivojugador(int turno, jugador *j, jugador *oponente);
 
 /* ==================== PROTOTIPOS DE IA.H ==================== */
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd);
@@ -152,5 +158,9 @@ void registerDeviceSelection(int player, DeviceType device, int order);
 
 /* ==================== PROTOTIPOS DE MINIJUEGOS.H ==================== */
 int ejecutarMinijuego(int numeroUso, int jugador);
+void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival);
+void seleccionardispositivosIA(dispositivousuario inventarioIA[], dispositivousuario inventarioJugador[], int sorteo);
+void aplicar_efecto_dispositivo(jugador *sujeto, jugador *rival, dispositivousuario *disp, int turno, int id_jugador);
+
 
 #endif

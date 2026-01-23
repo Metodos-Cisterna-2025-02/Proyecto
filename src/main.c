@@ -10,7 +10,7 @@
 #include "headers/ia.h"
 #include "headers/log.h"
 #include "headers/dispositivos.h"
-#include "headers/escenario.h"
+#include "headers/minijuegos.h"
 
 int** mapa;
 
@@ -22,6 +22,8 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 		system("clear");
 	#endif
 
+
+
 	if (!mapa)
 		mapa = getMap();
 
@@ -29,7 +31,7 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 	printf("            ESTADO DEL JUEGO            \n");
 	printf("========================================\n");
 	printf(" Jugador (J) en: (%d, %d, %d) | IA (I) en: (%d, %d, %d)\n", j->x, j->y, j->h, ia->x, ia->y, ia->h);
-	printf(" Meta (M) en: (%d, %d)\n", metaX, metaY);
+	printf(" Meta (M) en: (%d, %d, %d)\n", metaX, metaY, mapa[metaY][metaX]);
 	printf("----------------------------------------\n\n");
 
 	for (int y = 0; y < MAP_TEST_SIZE; y++) {
@@ -51,43 +53,33 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
-	int escenario[8][8];
-	do{
-		generar_escenario(escenario);
-	}while(altura_valida(escenario) == 0);
 
-	mapa = (int**) malloc(sizeof(int*)* 8); 
-    for (int i = 0; i < 8; i++) {
-        mapa[i] = (int*) malloc(sizeof(int)* 8);
-        for (int j = 0; j < 8; j++) {
-            mapa[i][j] = escenario[i][j];
-        }
-    }
-	mapLoaded = 1;
-	searchMap = mapa;
-	int metaX = rand()%8;
-	int metaY = rand()%8;
+	if (!mapa)
+		mapa = getMap();
+
+	if (mapa == NULL) {
+		printf("Error: No se pudo cargar el mapa.\n");
+		return 1;
+	}
+
+	int metaX = 7;
+	int metaY = 7;
 
 	jugador player;
-	coordenadas_inicio(&player.x, &player.y, metaX, metaY);
-	player.h = mapa[player.y][player.x];
+	player.x = 0;
+	player.y = 0;
+	player.h = 1;
 	player.bloqueado = 0;
 	player.rendido = 0;
 	player.puedeSubir3 = 0;
-	
-
-	printf("--- BIENVENIDO AL PROYECTO DE PROGRAMACION ---\n");
-	seleccionardispositivos(player.inventario);
 
 	jugador ia;
-	do{
-		coordenadas_inicio(&ia.x, &ia.y, metaX, metaY);
-	}while(ia.x == player.x && ia.y == player.y);
-	ia.h = mapa[ia.y][ia.x];
+	ia.x = 0;
+	ia.y = 7;
+	ia.h = 5;
 	ia.bloqueado = 0;
 	ia.rendido = 0;
 	ia.puedeSubir3 = 0;
-	
 
 	int turno = 1;
 	int juegoTerminado = 0;
@@ -113,7 +105,7 @@ int main(int argc, char *argv[]) {
 		if (player.x == metaX && player.y == metaY) {
 			printf("\n HAS GANADO!!!! Llegaste a la meta.\n");
 			juegoTerminado = 1;
-			continue;   //No sera mejor un break?
+			break;
 		}
 
 		// Pausa necesaria para que el usuario vea su posición antes del turno de la IA
@@ -128,20 +120,23 @@ int main(int argc, char *argv[]) {
 		//perdistes
 		if (ia.x == metaX && ia.y == metaY) {
 			printMapWithPlayers(&player, &ia, metaX, metaY);
-			printf("\nLa IA ha llegado a la meta. Gana la máquina.\n");
+			printf("\nLa IA ha llegado a la meta. Gana la IA.\n");
 			juegoTerminado = 1;
+			break;
+		}
+
+		if (ia.rendido) {
+			printMapWithPlayers(&player, &ia, metaX, metaY);
+			printf("\nLa IA se ha rendido. Has ganado!\n");
+			juegoTerminado = 1;
+			break;
 		}
 
 		turno++;
 	}
 
-	//freeMap(mapa);
-	for (int i = 0; i < 8; i++) {
-        free(mapa[i]); 
-    }
-    // Liberar el puntero de punteros
-    free(mapa);
+	freeMap(mapa);
 	printf("\nJuego terminado.\n");
-	
+
 	return 0;
 }
