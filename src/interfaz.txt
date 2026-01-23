@@ -6,5 +6,5 @@ media/height_4.png,media/height_3.png,media/height_0.png,media/height_1.png,medi
 media/height_2.png,media/height_0.png,media/height_5.png,media/height_4.png,media/height_2.png,media/height_0.png,media/height_0.png,media/height_1.png
 media/height_2.png,media/height_5.png,media/height_3.png,media/height_0.png,media/height_5.png,media/height_4.png,media/height_1.png,media/height_3.png
 media/height_4.png,media/height_1.png,media/height_4.png,media/height_0.png,media/height_2.png,media/height_5.png,media/height_1.png,media/height_0.png
-media/protoman.png,media/height_3.png,media/height_2.png,media/height_3.png,media/height_0.png,media/height_1.png,media/height_3.png,media/height_4.png
+media/height_3.png,media/height_3.png,media/protoman.png,media/height_3.png,media/height_0.png,media/height_1.png,media/height_3.png,media/height_4.png
 media/height_5.png,media/height_2.png,media/height_0.png,media/height_5.png,media/height_1.png,media/height_2.png,media/height_4.png,media/goal_height_5.png
