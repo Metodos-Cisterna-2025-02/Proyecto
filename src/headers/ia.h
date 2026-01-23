@@ -8,19 +8,19 @@ int **mapa;
 
 /* Definiciones de Funciones */
 
-int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd, int **mapa) {
-    return distanceTo(xStart, yStart, xEnd, yEnd);
+int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd) {
+	return distanceTo(xStart, yStart, xEnd, yEnd);
 }
 
 int ia_siguiente_paso(int xStart, int yStart, int xEnd, int yEnd, int *nx, int *ny) {
-    struct pos* next = getNext(xStart, yStart, xEnd, yEnd);
-    if (next == NULL)
-        return 0;
+	struct pos* next = getNext(xStart, yStart, xEnd, yEnd);
+	if (next == NULL)
+		return 0;
 
-    *nx = posGetX(*next);
-    *ny = posGetY(*next);
+	*nx = posGetX(*next);
+	*ny = posGetY(*next);
 
-    return 1;
+	return 1;
 }
 
 void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
@@ -84,7 +84,8 @@ void  seleccionardispositivosIA(dispositivousuario inventarioIA[],dispositivousu
 		while(eleccion1==eleccion2)
 			eleccion2=(rand()%5)+1;
 		
-			eleccion3=(rand()%5)+1;
+		eleccion3=(rand()%5)+1;
+		
 		while(eleccion3==eleccion2||eleccion3==eleccion1)
 			eleccion3=(rand()%5)+1;
 	}
@@ -108,10 +109,11 @@ void  seleccionardispositivosIA(dispositivousuario inventarioIA[],dispositivousu
 		
 		while(eleccion2==indices_dispositivo_jugador[0]||eleccion2==indices_dispositivo_jugador[1]||eleccion2==indices_dispositivo_jugador[2])
 			eleccion2=(rand()%5)+1;
-			eleccion3=(rand()%5)+1;
+		
+		eleccion3=(rand()%5)+1;
 			
-			while(eleccion3==eleccion1||eleccion3==eleccion2)
-				eleccion3=(rand()%5)+1;
+		while(eleccion3==eleccion1||eleccion3==eleccion2)
+			eleccion3=(rand()%5)+1;
 	}
 				
 	strcpy(inventarioIA[0].nombre, nombredispositivos[eleccion1 - 1]);
