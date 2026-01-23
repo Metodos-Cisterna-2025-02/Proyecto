@@ -200,7 +200,6 @@ void turnodeia(int turno) {
 	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
 }
 
-
 void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival) {
 	int seleccion = -1;
 	dispositivousuario *disp = NULL;

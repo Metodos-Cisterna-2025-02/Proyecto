@@ -46,7 +46,7 @@ static char* actionToNotation(Action *action) {
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
 	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X', 'V'};
-	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
+	char deviceChar[] = {'0', 'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
 
 	// Verificar si es un uso de dispositivo
