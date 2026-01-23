@@ -208,7 +208,7 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
 		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACAAAA
 
 		// Registro exitoso en el log
-		// registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1); pq ta mute
+		registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1); pq ta mute
 	} 
 	else {
 		printf("FALLOOO CUEEEk, El dispositivo %s se ha desperdiciado.\n", disp->nombre);
