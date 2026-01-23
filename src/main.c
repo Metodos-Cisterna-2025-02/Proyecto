@@ -85,13 +85,15 @@ int main(int argc, char *argv[]) {
 	int juegoTerminado = 0;
 
 	while (!juegoTerminado) {
-		// Mostramos el mapa al inicio de cada ciclo
+		// Mostrar el mapa
 		printMapWithPlayers(&player, &ia, metaX, metaY);
 
-		/* TURNO JUGADOR */
+		//turno jugador
 		printf("\n>> ES TU TURNO\n");
 		turno_jugador(&player, &ia, turno);
 
+
+		//cambio de estado rendido y termina el juego
 		if (player.rendido) {
 			printf("\nTe has rendido. Gana la IA.\n");
 			juegoTerminado = 1;
@@ -101,9 +103,9 @@ int main(int argc, char *argv[]) {
 		printMapWithPlayers(&player, &ia, metaX, metaY);
 
 		if (player.x == metaX && player.y == metaY) {
-			printf("\n¡HAS GANADO! Llegaste a la meta.\n");
+			printf("\n HAS GANADO!!!! Llegaste a la meta.\n");
 			juegoTerminado = 1;
-			continue;
+			continue;   //No sera mejor un break?
 		}
 
 		// Pausa necesaria para que el usuario vea su posición antes del turno de la IA
@@ -111,10 +113,11 @@ int main(int argc, char *argv[]) {
 		while (getchar() != '\n'); 
 		getchar(); 
 
-		/* TURNO IA */
+		//turno ia
 		printf("\n>> TURNO DE LA IA\n");
 		turnoIA(&ia, &player, metaX, metaY, turno);
 
+		//perdistes
 		if (ia.x == metaX && ia.y == metaY) {
 			printMapWithPlayers(&player, &ia, metaX, metaY);
 			printf("\nLa IA ha llegado a la meta. Gana la máquina.\n");
