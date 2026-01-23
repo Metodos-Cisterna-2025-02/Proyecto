@@ -150,11 +150,11 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
 			printf("NO\n");
 	}
 }
-//no se esta usando
+//no se esta usando posible borrador
 void usardispositivo(int turno, dispositivousuario *disp) {
 	DeviceType dispositivo_tipo;
 	
-	/* Convertir nombre de dispositivo a DeviceType para registro */
+	
 	char* dispositivo_nombre = disp->nombre;
 	if (strcmp(dispositivo_nombre, "Gaius") == 0)
 		dispositivo_tipo = GAIUS;
@@ -186,7 +186,7 @@ void usardispositivo(int turno, dispositivousuario *disp) {
 	registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
 							NONE, NONE, NONE, 1);
 }
-
+//borrar?
 void turnodeia(int turno) {
 	printf("\n--- TURNO DE LA IA ---\n");
 
@@ -199,12 +199,12 @@ void turnodeia(int turno) {
 	
 	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
 }
-
+//funcion fuerte de dispositivos
 void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival) {
 	int seleccion = -1;
-	dispositivousuario *disp = NULL;
+	dispositivousuario *disp = NULL;  //Nos tiro bug asi q definimos para que no apunte a nada inicialmente
 
-	// 1. SELECCION DE DISPOSITIVO
+	// SELECCION DE DISPOSITIVOSS
 
 	if (id_jugador == 1) { 
 		// Logica para el Usuario 
@@ -252,10 +252,10 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
         
 		// Marcamos como usado y llamamos al efecto planteadoop
 		disp->disponible = 0; 
-		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
+		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACAAAA
 
 		// Registro exitoso en el log
-		// registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
+		// registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1); pq ta mute
 	} 
 	else {
 		printf("FALLOOO CUEEEk, El dispositivo %s se ha desperdiciado.\n", disp->nombre);
