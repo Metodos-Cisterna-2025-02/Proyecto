@@ -153,7 +153,7 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
 			printf("NO\n");
 	}
 }
-
+//no se esta usando
 void usardispositivo(int turno, dispositivousuario *disp) {
 	DeviceType dispositivo_tipo;
 	
@@ -179,13 +179,13 @@ void usardispositivo(int turno, dispositivousuario *disp) {
 		return;
 	}
 
+
 	// Marcar como usado
 	disp->disponible = 0;
 
 	printf("Dispositivo %s marcado como usado.\n", disp->nombre);
+	//AQUI VA FUNCION PANCHIOIIIIOOO
 
-	// Aquí se registraría la acción específica del dispositivo y se llamaría a su función
-	// Por ahora solo registramos el uso genérico
 	registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
 							NONE, NONE, NONE, 1);
 }
@@ -203,4 +203,72 @@ void turnodeia(int turno) {
 	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
 }
 
+
+void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival) {
+    int seleccion = -1;
+    dispositivousuario *disp = NULL;
+
+    // 1. SELECCION DE DISPOSITIVO
+
+	if (id_jugador == 1) { 
+        // Logica para el Usuario 
+        mostrardispositivos(sujeto->inventario, 3);
+        printf("Seleccione dispositivo (1-3) o 0 para cancelar: ");
+        
+        
+        scanf("%d", &seleccion);
+        
+       
+        if (seleccion < 1 || seleccion > 3) {
+            printf("Accion cancelada o opcion invalida.\n");
+            return; 
+        }
+    }
+    else {                           //logica IA
+        for (int i = 0; i < 3; i++) {
+            if (sujeto->inventario[i].disponible) {
+                seleccion = i + 1;
+                break;
+            }
+        }
+
+        if (seleccion == -1) return; // No tiene nada dispo
+    }
+
+    disp = &sujeto->inventario[seleccion - 1]; //DISPOSITIVOOOO
+    if (!disp->disponible) return;
+
+    // RETO DEL MINIJUEGO
+    // Convertimos el id_jugador para q se adapte a minijuegos.h
+   if (id_jugador == 1) {
+        id_para_minijuego = 1;
+    } else {
+        id_para_minijuego = 0;
+    }
+    
+    printf("\n Intentando activar %s (Nivel %d)...\n", disp->nombre, disp->nivel);
+
+    if (ejecutarMinijuego(disp->nivel, id_para_minijuego)) {
+        printf("LOGRADO!!!! Dispositivo %s activado.\n", disp->nombre);
+        
+        // Marcamos como usado y llamamos al efecto planteadoop
+        disp->disponible = 0; 
+        //aplicar_efecto_dispositivo(sujeto, rival, disp, turno);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
+
+        // Registro exitoso en el log
+        registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
+    } 
+    else {
+        printf("FALLOOO CUEEEk, El dispositivo %s se ha desperdiciado.\n", disp->nombre);
+        disp->disponible = 0; 
+        registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 0);
+    }
+}
+
+
 #endif
+
+
+
+
+
