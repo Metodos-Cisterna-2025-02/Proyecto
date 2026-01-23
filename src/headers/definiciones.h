@@ -7,6 +7,8 @@
 #include <time.h>
 #include <math.h>
 
+
+
 /* ==================== DEFINES DE IO.H ==================== */
 
 /* Definiciones de mapa */
@@ -152,5 +154,13 @@ void registerDeviceSelection(int player, DeviceType device, int order);
 
 /* ==================== PROTOTIPOS DE MINIJUEGOS.H ==================== */
 int ejecutarMinijuego(int numeroUso, int jugador);
+
+
+
+
+void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival);
+void seleccionardispositivosIA(dispositivousuario inventarioIA[], dispositivousuario inventarioJugador[], int sorteo);
+void aplicar_efecto_dispositivo(jugador *sujeto, jugador *rival, dispositivousuario *disp, int turno, int id_jugador);
+
 
 #endif

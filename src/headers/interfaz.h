@@ -3,6 +3,7 @@
 
 #include "definiciones.h"
 
+
 /* Definiciones de Funciones */
 
 /* Pide una opcion entre W, A, S, D al usuario */
@@ -237,15 +238,15 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
 
     disp = &sujeto->inventario[seleccion - 1]; //DISPOSITIVOOOO
     if (!disp->disponible) return;
+	int id_para_minijuego;
 
     // RETO DEL MINIJUEGO
     // Convertimos el id_jugador para q se adapte a minijuegos.h
-   if (id_jugador == 1) {
-        id_para_minijuego = 1;
-    } else {
-        id_para_minijuego = 0;
-    }
-    
+ if (id_jugador == 1) {
+    id_para_minijuego = 0; 
+} else {
+    id_para_minijuego = 1; 
+}
     printf("\n Intentando activar %s (Nivel %d)...\n", disp->nombre, disp->nivel);
 
     if (ejecutarMinijuego(disp->nivel, id_para_minijuego)) {
@@ -253,7 +254,7 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
         
         // Marcamos como usado y llamamos al efecto planteadoop
         disp->disponible = 0; 
-        //aplicar_efecto_dispositivo(sujeto, rival, disp, turno);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
+        aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
 
         // Registro exitoso en el log
         registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
