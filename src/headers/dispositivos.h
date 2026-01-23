@@ -7,14 +7,6 @@
 //Convierte IDs a strings para hacer comparacion ya que el struct maneja los dispositivos en strings y para recuperar
 //los dispositivos no seleccionados debemos hacer la conversion.
 
-// TRADUCCION:
-// En definiciones.h, la estructura 'dispositivousuario' guarda el nombre
-// del dispositivo como TEXTO (char nombre[16]), no guarda el ID numérico.
-// la lógica usa NUMEROS (enum DeviceType: GAIUS=1, etc.) para ser más segura y evitar errores de tecleo.
-// Esta función recibe el número (ID 1) y devuelve el texto 
-// correspondiente ("Gaius") para poder compararlo con lo que hay guardado 
-// en el inventario del jugador usando strcasecmp().
-
 
 static const char* obtenerNombreDispositivo(int id) {
     switch(id) {
