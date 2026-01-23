@@ -3,3 +3,4 @@
 *.log
 test.c
 prueba.c
+/.vscode

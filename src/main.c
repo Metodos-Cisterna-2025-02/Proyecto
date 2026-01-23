@@ -21,6 +21,8 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 		system("clear");
 	#endif
 
+
+
 	if (!mapa)
 		mapa = getMap();
 
@@ -28,7 +30,7 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 	printf("            ESTADO DEL JUEGO            \n");
 	printf("========================================\n");
 	printf(" Jugador (J) en: (%d, %d, %d) | IA (I) en: (%d, %d, %d)\n", j->x, j->y, j->h, ia->x, ia->y, ia->h);
-	printf(" Meta (M) en: (%d, %d)\n", metaX, metaY);
+	printf(" Meta (M) en: (%d, %d, %d)\n", metaX, metaY, mapa[metaY][metaX]);
 	printf("----------------------------------------\n\n");
 
 	for (int y = 0; y < MAP_TEST_SIZE; y++) {
@@ -81,22 +83,23 @@ int main(int argc, char *argv[]) {
 	ia.rendido = 0;
 	ia.puedeSubir3 = 0;
 
-	printf("--- BIENVENIDO AL PROYECTO DE PROGRAMACION ---\n");
-    int sorteo = realizarsorteocarasello();
+	initializeInterface(player.x, player.y, ia.x, ia.y, metaX, metaY);
 
-    if (sorteo==1) {
-        printf("\nGanaste el sorteo - Eliges tus dispositivos primero.\n");
+	printf("--- BIENVENIDO AL PROYECTO DE PROGRAMACION ---\n");
+
+	int sorteo = realizarsorteocarasello();
+
+	if (sorteo==1) {
+		printf("\nGanaste el sorteo - Eliges tus dispositivos primero.\n");      
+		
+		seleccionardispositivos(player.inventario);
+        	seleccionardispositivosIA(ia.inventario, player.inventario, 1);
+	} else {
+		printf("\nPerdiste - La IA elige sus dispositivos primero.\n");
         
-        seleccionardispositivos(player.inventario);
-        
-        seleccionardispositivosIA(ia.inventario, player.inventario, 1);
-    } else {
-        printf("\nPerdiste - La IA elige sus dispositivos primero.\n");
-        
-        seleccionardispositivosIA(ia.inventario, player.inventario, 0);
-        
-        seleccionardispositivos(player.inventario);
-    }
+		seleccionardispositivosIA(ia.inventario, player.inventario, 0);
+		seleccionardispositivos(player.inventario);
+	}
 
 	int turno = 1;
 	int juegoTerminado = 0;
@@ -122,7 +125,7 @@ int main(int argc, char *argv[]) {
 		if (player.x == metaX && player.y == metaY) {
 			printf("\n HAS GANADO!!!! Llegaste a la meta.\n");
 			juegoTerminado = 1;
-			continue;   //No sera mejor un break?
+			break;
 		}
 
 		// Pausa necesaria para que el usuario vea su posición antes del turno de la IA
@@ -137,8 +140,16 @@ int main(int argc, char *argv[]) {
 		//perdistes
 		if (ia.x == metaX && ia.y == metaY) {
 			printMapWithPlayers(&player, &ia, metaX, metaY);
-			printf("\nLa IA ha llegado a la meta. Gana la máquina.\n");
+			printf("\nLa IA ha llegado a la meta. Gana la IA.\n");
 			juegoTerminado = 1;
+			break;
+		}
+
+		if (ia.rendido) {
+			printMapWithPlayers(&player, &ia, metaX, metaY);
+			printf("\nLa IA se ha rendido. Has ganado!\n");
+			juegoTerminado = 1;
+			break;
 		}
 
 		turno++;
