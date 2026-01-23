@@ -19,6 +19,13 @@ def actualizar_contenido():
 		filas = int(size[0])
 		columnas = int(size[1])
 
+		tile_size = (20, 20)
+		screen = ventana.winfo_screenwidth()
+		if screen >= 1920:
+			tile_size = (40, 40)
+		elif screen >= 1280:
+			tile_size = (30, 30)
+
 		# Leer la matriz de nombres de imágenes
 		matriz_imagenes = []
 		for raw in data:
@@ -29,7 +36,7 @@ def actualizar_contenido():
 		for i in range(filas):
 			for j in range(columnas):
 				imagen = Image.open(matriz_imagenes[i][j])
-				imagen = imagen.resize((20, 20), Image.LANCZOS)
+				imagen = imagen.resize(tile_size, Image.LANCZOS)
 				imagen_tk = ImageTk.PhotoImage(imagen)
 
 
@@ -44,6 +51,12 @@ def actualizar_contenido():
 
 
 def cargar_interfaz():
+	tile_size = (20, 20)
+	screen = ventana.winfo_screenwidth()
+	if screen >= 1920:
+		tile_size = (40, 40)
+	elif screen >= 1280:
+		tile_size = (30, 30)
 	try:
 		with open(INTERFAZ_PATH, 'r') as archivo:
 			# Leer el número de interfaz
@@ -71,7 +84,7 @@ def cargar_interfaz():
 				fila_imagenes_tk = []  # Lista para almacenar las imágenes de la fila actual
 				for j in range(columnas):
 					imagen = Image.open(matriz_imagenes[i][j])
-					imagen = imagen.resize((20, 20), Image.LANCZOS)
+					imagen = imagen.resize(tile_size, Image.LANCZOS)
 					imagen_tk = ImageTk.PhotoImage(imagen)
 					fila_imagenes_tk.append(imagen_tk)
 					etiqueta = tk.Label(ventana, image=imagen_tk)

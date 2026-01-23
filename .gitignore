@@ -3,3 +3,6 @@
 *.log
 test.c
 prueba.c
+.vscode/
+maps/
+!maps/map_test.txt

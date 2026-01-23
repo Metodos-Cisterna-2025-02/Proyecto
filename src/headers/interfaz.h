@@ -25,19 +25,15 @@ char pedirmovimiento(int turno) {
 
 		if (tecla == 'w' || tecla == 'W') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_UP, 0, 0, esvalida);
 		}
 		else if (tecla == 'a' || tecla == 'A') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_LEFT, 0, 0, esvalida);
 		}
 		else if (tecla == 's' || tecla == 'S') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_DOWN, 0, 0, esvalida);
 		}
 		else if (tecla == 'd' || tecla == 'D') {
 			esvalida = 1;
-			registerSimpleAction(turno, 1, MOVE_RIGHT, 0, 0, esvalida);
 		}
 		else {
 			printf("Tecla invalida. Usa W, A, S o D.\n");
@@ -154,62 +150,13 @@ void mostrardispositivos(dispositivousuario misdispositivos[], int cantidad) {
 			printf("NO\n");
 	}
 }
-//no se esta usando
-void usardispositivo(int turno, dispositivousuario *disp) {
-	DeviceType dispositivo_tipo;
-	
-	/* Convertir nombre de dispositivo a DeviceType para registro */
-	char* dispositivo_nombre = disp->nombre;
-	if (strcmp(dispositivo_nombre, "Gaius") == 0)
-		dispositivo_tipo = GAIUS;
-	else if (strcmp(dispositivo_nombre, "Quadratus") == 0)
-		dispositivo_tipo = QUADRATUS;
-	else if (strcmp(dispositivo_nombre, "Hydrus") == 0)
-		dispositivo_tipo = HYDRUS;
-	else if (strcmp(dispositivo_nombre, "Phalanx") == 0)
-		dispositivo_tipo = PHALANX;
-	else if (strcmp(dispositivo_nombre, "Argus") == 0)
-		dispositivo_tipo = ARGUS;
-	else
-		dispositivo_tipo = NONE;
 
-	if (disp->disponible == 0) {
-		printf("El dispositivo ya fue usado.\n");
-		registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
-								NONE, NONE, NONE, 0);
-		return;
-	}
-
-
-	// Marcar como usado
-	disp->disponible = 0;
-
-	printf("Dispositivo %s marcado como usado.\n", disp->nombre);
-	//AQUI VA FUNCION PANCHIOIIIIOOO
-
-	registerCompleteAction(turno, 1, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
-							NONE, NONE, NONE, 1);
-}
-
-void turnodeia(int turno) {
-	printf("\n--- TURNO DE LA IA ---\n");
-
-	DeviceType dispositivo_tipo = NONE; // Dispositivo genérico usado por la IA
-
-	// Aquí se llamaría las funciones para la lógica de la IA
-	// Por mientras, hacemos un registro de turno genérico
-	registerCompleteAction(turno, 2, USE_DEVICE, dispositivo_tipo, 0, 0, 0, 0, 0,
-		NONE, NONE, NONE, 1);
-	
-	registerSimpleAction(turno, 2, MOVE_UP, 0, 0, 1);
-}
-
-
+//funcion fuerte de dispositivos
 void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *rival) {
 	int seleccion = -1;
-	dispositivousuario *disp = NULL;
+	dispositivousuario *disp = NULL;  //Nos tiro bug asi q definimos para que no apunte a nada inicialmente
 
-	// 1. SELECCION DE DISPOSITIVO
+	// SELECCION DE DISPOSITIVOSS
 
 	if (id_jugador == 1) { 
 		// Logica para el Usuario 
@@ -254,13 +201,14 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
 
 	if (ejecutarMinijuego(disp->nivel, id_para_minijuego)) {
 		printf("LOGRADO!!!! Dispositivo %s activado.\n", disp->nombre);
-        
+       
+		//X-X_X-X-X-X-X-XX-X_X-X-X-X-X-X SEGUNDA PARTE IMPORTANTE X-X_X-X-X-X-X-X X-X_X-X-X-X-X-X
 		// Marcamos como usado y llamamos al efecto planteadoop
 		disp->disponible = 0; 
-		// aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
+		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACAAAA
 
 		// Registro exitoso en el log
-		registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);
+		//registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1); pq ta mute
 	} 
 	else {
 		printf("FALLOOO CUEEEk, El dispositivo %s se ha desperdiciado.\n", disp->nombre);

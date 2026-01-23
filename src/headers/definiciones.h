@@ -31,8 +31,8 @@
 #define HEIGHT4 "media/height_4.png"
 #define HEIGHT5 "media/height_5.png"
 #define OUT_OF_BOUNDS "media/out_of_bounds.png"
-#define PLAYER_ICON "media/protoman.png"
-#define BOT_ICON "media/rockman.png"
+#define PLAYER_ICON "media/rockman.png"
+#define BOT_ICON "media/protoman.png"
 #define MAX_LINE_LENGTH 256
 
 /* ==================== DEFINES DE SEARCH.H ==================== */
@@ -57,7 +57,8 @@ typedef enum {
 	MOVE_LEFT = 4,
 	MOVE_RIGHT = 5,
 	USE_DEVICE = 6,
-	SURRENDER = 7
+	SURRENDER = 7,
+	VICTORY = 8
 } ActionType;
 
 /* ==================== ESTRUCTURAS ==================== */
@@ -82,6 +83,8 @@ typedef struct {
 	int player;
 	ActionType actionType;
 	DeviceType device;
+	int previousX;
+	int previousY;
 	int targetX;
 	int targetY;
 	int previousValue;
@@ -105,7 +108,7 @@ struct pos {
 };
 
 /* ==================== PROTOTIPOS DE ESCENARIO.H ==================== */
-void generar_escenario(int escenario[8][8]);
+void generar_escenario(int** escenario);
 void coordenadas_inicio(int *x, int *y, int x_meta, int y_meta);
 
 /* ==================== PROTOTIPOS DE SEARCH.H ==================== */
@@ -118,6 +121,8 @@ int posGetH(struct pos target);
 /* ==================== PROTOTIPOS DE IO.H ==================== */
 int** writeMap(int x, int y, int value);
 int** getMap();
+void createMap(int **mapa);
+void setMapData(int **mapa);
 void freeMap();
 void printMap();
 void initializeInterface(int xPlayer, int yPlayer, int xAI, int yAI, int xGoal, int yGoal);
