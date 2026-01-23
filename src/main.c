@@ -21,6 +21,8 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 		system("clear");
 	#endif
 
+
+
 	if (!mapa)
 		mapa = getMap();
 

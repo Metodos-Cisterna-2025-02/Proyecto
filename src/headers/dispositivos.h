@@ -18,25 +18,20 @@
 
 static const char* obtenerNombreDispositivo(int id) {
     switch(id) {
-        case GAIUS:
-			return "Gaius";
-        case QUADRATUS:
-			return "Quadratus";
-        case HYDRUS:
-			return "Hydrus";
-        case PHALANX: 
-			return "Phalanx";
-        case ARGUS: 
-			return "Argus";
-        default: 
-			return "Desconocido";
+        case GAIUS: return "Gaius";
+        case QUADRATUS: return "Quadratus";
+        case HYDRUS: return "Hydrus";
+        case PHALANX: return "Phalanx";
+        case ARGUS: return "Argus";
+        default: return "Desconocido";
     }
 }
 
 /* Este archivo está reservado para funciones de dispositivos */
 
 void aplicar_efecto_dispositivo(sujeto, rival, disp, turno)  {
-	
+
+}	
 	
 
 static void usar_Gaius(jugador *usuario, int turno) {
