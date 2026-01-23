@@ -75,6 +75,8 @@ static int mover_jugador(jugador *j, char direccion, int turno) {
 }
 
 void turno_jugador(jugador *j, jugador *oponente, int turno) {
+
+	//Paso mapa funcionamiento.
 	if (!mapa)
 		mapa = getMap();
 
@@ -86,7 +88,8 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 	while (!turnoTerminado && !j->rendido) {
 		opcion = mostrarmenuturno(turno, yaUsoDispositivo);
 
-		if (opcion == 1) {
+		//En caso de estar bloquedo x Hydrux
+		if (opcion == 1) { 
 			if (j->bloqueado)
 				turnoTerminado = 1;
 			else {
@@ -94,7 +97,7 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 				if (mover_jugador(j, direccion, turno))
 					turnoTerminado = 1;
 			}
-		}
+		} //Seleccion 2. disp.
 		else if (opcion == 2) {
 			if (yaUsoDispositivo) {
 				printf("Ya has usado un dispositivo este turno.\n");
@@ -110,11 +113,11 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 			turnoTerminado = 1;
 		}
 	}
-	if (j->bloqueado) j->bloqueado = 0;
+	if (j->bloqueado) j->bloqueado = 0; //Reseteo estado Bloqueo (Hydruss)
 }
  
 
-//no se esta usando uwu
+//no se esta usando pero se tomo como base para unificar una funcion
 
 static void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
 	printf("\n[SISTEMA] Abriendo interfaz de dispositivos...\n");
@@ -156,7 +159,8 @@ static void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
 
 	if (disp->disponible) {
 		usardispositivo(turno, disp);          // marca usado
-		// TODO: llamardispositivo(); // Implementar la lógica específica del dispositivo
+		// No se uso estas funciones funalmente, pero se tomaron de base
+		
 		exito = 1;
 	} else {
 		printf("Ese dispositivo ya fue usado o no esta disponible\n");
