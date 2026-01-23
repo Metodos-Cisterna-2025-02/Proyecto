@@ -6,7 +6,7 @@
 int **mapa;
 
 
-/* Definiciones de Funciones */
+//funciones
 
 int ia_distancia_objetivo(int xStart, int yStart, int xEnd, int yEnd) {
 	return distanceTo(xStart, yStart, xEnd, yEnd);
@@ -40,13 +40,13 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 	if (!mapa) mapa = getMap();
 
 	int nx, ny;
+	int exito = 0;
 	int ia_dist = ia_distancia_objetivo(ia->x, ia->y, metaX, metaY);
 	int pj_dist = ia_distancia_objetivo(jugador->x, jugador->y, metaX, metaY);
 	int tiene_items = ia_tiene_dispositivos(ia);
 
-	printf("\n--- TURNO IA (Turno %d) ---\n", turno);
-
-	// Bloqueo x hydrus?
+	printf("\n--- TURNO IA ---\n");
+	
 	if (ia->bloqueado == 1) {
         	printf(" [ESTADO] IA bloqueada por Hydrus.\n");
         	ia->bloqueado = 0; // Se libera el bloqueo para el proximo turno
@@ -88,22 +88,33 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 	int puede_moverse = ia_siguiente_paso(ia->x, ia->y, metaX, metaY, &nx, &ny);
 	if (puede_moverse) {
 		ActionType mov;
-        	if (nx > ia->x) mov = MOVE_RIGHT;
-        	else if (nx < ia->x) mov = MOVE_LEFT;
-        	else if (ny > ia->y) mov = MOVE_DOWN;
-        	else mov = MOVE_UP;
+		if (ia->x - nx == -1) // x - (x + 1) = -1
+			mov = MOVE_RIGHT;
+		else if (ia->x - nx == 1) // x - (x - 1) = 1
+			mov = MOVE_LEFT;
+		else if (ia->y - ny == -1)
+			mov = MOVE_DOWN;
+		else if (ia->y - ny == 1)
+			mov = MOVE_UP;
+		
+		ia->x = nx;
+		ia->y = ny;
+		ia->h = mapa[ny][nx];
+		
+		exito = 1;
 
-        	printf(" [IA] Avanzando hacia la meta...!!!!!!!\n");
-        	ia->x = nx;
-        	ia->y = ny;
-        	ia->h = mapa[ny][nx];
-        
-        	registerSimpleAction(turno, 2, mov, nx, ny, 1);
+		registerSimpleAction(turno, 2, mov, nx, ny, exito);
+	} else {
+		// TODO: IA no encontró camino, implementar lógica de rendición de IA
+		ia->rendido = 1;
+
+		printf("IA no encontro un camino valido hacia la meta.\n");
+		registerSimpleAction(turno, 2, SURRENDER, ia->x, ia->y, 1);
 	}
 }
 
 
-//inicio algoritmo de como la ia selecciona los disp
+
 void  seleccionardispositivosIA(dispositivousuario inventarioIA[],dispositivousuario inventarioJugador[],int sorteo) {
 	int eleccion1, eleccion2, eleccion3;
 

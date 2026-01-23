@@ -6,7 +6,7 @@
 int** mapa;
 
 /* Prototipos de funciones estáticas */
-static int mover_jugador(jugador *j, char direccion);
+static int mover_jugador(jugador *j, char direccion, int turno);
 static int es_movimiento_valido(jugador *j, int nx, int ny);
 static void usardispositivojugador(int turno, jugador *j, jugador *oponente);
 
@@ -33,12 +33,13 @@ static int es_movimiento_valido(jugador *j, int nx, int ny) {
 	return 1;
 }
 
-static int mover_jugador(jugador *j, char direccion) {
+static int mover_jugador(jugador *j, char direccion, int turno) {
 	if (!mapa)
 		mapa = getMap();
 
 	int nx = j->x;
 	int ny = j->y;
+	int nh = mapa[j->y][j->x];
 
 	ActionType mov;
 
@@ -62,9 +63,11 @@ static int mover_jugador(jugador *j, char direccion) {
 		return 0;
 
 	if (es_movimiento_valido(j, nx, ny)) {
+		updateInterfacePlayer(j->x, j->y, nh, nx, ny);
 		j->x = nx;
 		j->y = ny;
-		registerSimpleAction(-1, 1, mov, nx, ny, 1);
+		j->h = mapa[ny][nx];
+		registerSimpleAction(turno, 1, mov, nx, ny, 1);
 		return 1;
 	}
 
@@ -88,7 +91,7 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 				turnoTerminado = 1;
 			else {
 				direccion = pedirmovimiento(turno);
-				if (mover_jugador(j, direccion))
+				if (mover_jugador(j, direccion, turno))
 					turnoTerminado = 1;
 			}
 		}
