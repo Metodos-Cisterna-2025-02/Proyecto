@@ -25,7 +25,7 @@ static const char* obtenerNombreDispositivo(int id) {
     }
 }
 
-/* Este archivo está reservado para funciones de dispositivos */
+/* Este archivo esta reservado para funciones de dispositivos */
 
 void aplicar_efecto_dispositivo(sujeto, rival, disp, turno)  {
 	
@@ -84,7 +84,7 @@ static void usar_Gaius(jugador *usuario, int turno) {
         // Escribir en el mapa
         writeMap(x, y, nuevaAltura);
         
-        // Si writeMap detecta un error (ej: subir de 5 a 6), la altura no cambia.
+        // Si writeMap detecta un error la altura no cambia.
         if (mapa[y][x] != alturaActual) {
             printf("Exito!!! Nueva altura: %d\n", mapa[y][x]);
             
@@ -121,7 +121,7 @@ static void usar_Phalanx(jugador *usuario, int turno) {
         return;
     }
 
-    // Validacion distancia de modulos, no valido para diagonales (Distancia "Manhattan"(?) debe ser 1)
+    // Validacion distancia de modulos, no valido para diagonales (Distancia "Manhattan" debe ser 1)
     if (abs(usuario->x - Dest_x) + abs(usuario->y - Dest_y) != 1) {
         printf("Error: Phalanx solo permite moverse a casillas adyacentes (no diagonales). QUE PENAAAA!.\n");
         registerCompleteAction(turno, 1, USE_DEVICE, PHALANX, Dest_x, Dest_y, 0, 0, 0, NONE, NONE, NONE, 0);
@@ -141,7 +141,7 @@ static void usar_Phalanx(jugador *usuario, int turno) {
     
     // Verificacion de altura, no mas de 3 metros de dif.
     if (h_Destino - h_Origen > 3) {
-        printf("Error: La pared es demasiado alta (> 3 metros).\n");
+        printf("Error: El modulo es demasiado alto (> 3 metros).\n");
         registerCompleteAction(turno, 1, USE_DEVICE, PHALANX, Dest_x, Dest_y, 0, 0, 0, NONE, NONE, NONE, 0);
         return;
     }
@@ -162,7 +162,6 @@ static void usar_Hydrus(jugador *rival, int turno) {
     printf("\n--- HYDRUS ACTIVADO: Congelacion ---\n");
     
     // Aplicar efecto
-    // La variable 'bloqueado' es leida en el turno del rival para impedir su movimiento
     rival->bloqueado = 1; 
     
     printf("El oponente ha sido marcado con hielo. NO podra moverse en su siguiente turno.\n WARNING!!! Todavia puede usar sus dispositivos. \n");
@@ -227,7 +226,7 @@ static void usar_Quadratus(jugador *rival, int turno) {
             
             // Bloqueamos si es que ya estaba disponible
             if (rival->inventario[i].disponible == 1) {
-                rival->inventario[i].disponible = 0; //
+                rival->inventario[i].disponible = 0; 
                 printf("Exito!!! El dispositivo %s del rival ha sido inutilizado. SIQUESIIII\n", nombreBuscado);
                 encontrado = 1;
                 
@@ -249,16 +248,14 @@ static void usar_Quadratus(jugador *rival, int turno) {
 static void usar_Argus(jugador *yo, jugador *rival, int turno) {
     printf("\n--- ARGUS ACTIVADO: Recuperacion de descartes ---\n");
 
-    // DETECTAR DESCARTES
+    // DEBEMOS DETECTAR DESCARTES
     int rivalTiene[6] = {0, 0, 0, 0, 0, 0}; 
 
     // Recorremos el inventario del rival para ver que tiene
-	// Buscamos cual es el ID de su dispositivo comparando nombres
-    // Necesario porque el struct guarda los dispos. en strings
     for (int i = 0; i < 3; i++) {
         for (int id = 1; id <= 5; id++) {
             if (strcasecmp(rival->inventario[i].nombre, obtenerNombreDispositivo(id)) == 0) {
-                rivalTiene[id] = 1; // Marcamos
+                rivalTiene[id] = 1; 
             }
         }
     }
@@ -314,7 +311,7 @@ static void usar_Argus(jugador *yo, jugador *rival, int turno) {
     // Sobreescribimos el nombre en el inventario del rival
     strcpy(rival->inventario[idxRival].nombre, obtenerNombreDispositivo(idRecuperar));
     
-    // Le asignamos el nivel por defecto correspondiente al ID
+    // Le asignamos el nivel por defecto correspondiente a la ID
     rival->inventario[idxRival].nivel = idRecuperar; 
     
     // Marcar dispositivo nuevo como disponible
@@ -325,7 +322,7 @@ static void usar_Argus(jugador *yo, jugador *rival, int turno) {
 }
 
 
-// * FUNCIONES DE DISPOSITIVOS EXCLUSIVAS PARA LA IA *
+// **FUNCIONES DE DISPOSITIVOS EXCLUSIVAS PARA LA IA**
 
 static int usar_Gaius_ia(int x, int y, int opcion, int turno) {
 	
@@ -360,9 +357,9 @@ static int usar_Gaius_ia(int x, int y, int opcion, int turno) {
         printf("IA Usa GAIUS en (%d,%d). Altura %d -> %d\n", x, y, alturaActual, mapa[y][x]);
         registerCompleteAction(turno, 2, USE_DEVICE, GAIUS, x, y, 
                                alturaActual, mapa[y][x], 0, NONE, NONE, NONE, 1);
-        return 1; // Éxito
+        return 1;
     }
-    return 0; // Fallo
+    return 0;
 }
 
 static int usar_Hydrus_ia(jugador *rival, int turno) {
@@ -417,18 +414,36 @@ static int usar_Phalanx_ia(jugador *ia, int Dest_x, int Dest_y, int turno) {
 
 static int usar_Quadratus_ia(jugador *rival, int turno) {
 	
-    // Busca el primer dispositivo disponible del humano y bloquea
-    for(int i=0; i<3; i++) {
+    // Buscamos dispositivos disponibles
+    int slotsDisponibles[3];
+    int cantidad = 0;
+
+    for(int i = 0; i < 3; i++) {
         if(rival->inventario[i].disponible == 1) {
-            rival->inventario[i].disponible = 0;
-            printf("IA Usa QUADRATUS. Ha bloqueado tu %s. DAAAAAMN\n", rival->inventario[i].nombre);
-            
-            // Convertimos el nombre a ID para registrar en el log
-            registerCompleteAction(turno, 2, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, QUADRATUS, NONE, NONE, 1);
-            return 1;
+            slotsDisponibles[cantidad] = i; 
+            cantidad++;
         }
     }
-    return 0;
+
+    // Si no hay disposi. disponibles falla
+    if (cantidad == 0) {
+		return 0;
+	}
+
+    //ELIGE UNO AL AZAR USANDO RAND()
+    int indiceAleatorio = rand() % cantidad;
+    int slotA_Romper = slotsDisponibles[indiceAleatorio];
+
+    // Bloquea
+    rival->inventario[slotA_Romper].disponible = 0;
+    
+    printf("IA Usa QUADRATUS. Ha bloqueado tu %s. DAAAAAAAMN\n", 
+           rival->inventario[slotA_Romper].nombre, slotA_Romper + 1);
+            
+    // Registrar en log
+    registerCompleteAction(turno, 2, USE_DEVICE, QUADRATUS, 0, 0, 0, 0, 0, QUADRATUS, NONE, NONE, 1);
+    
+    return 1;
 }
 
 static int usar_Argus_ia(jugador *ia, jugador *humano, int turno) {
@@ -472,7 +487,7 @@ static int usar_Argus_ia(jugador *ia, jugador *humano, int turno) {
         }
     }
 
-    // Si el humano no tiene nada disponible, atacamos cualquier espacio (0, 1 o 2)
+    // Si el humano no tiene nada disponible, usa cualquier espacio
     int slotObjetivo;
     if (cantidadSlots > 0) {
         slotObjetivo = slotsDisponibles[rand() % cantidadSlots];
@@ -486,7 +501,7 @@ static int usar_Argus_ia(jugador *ia, jugador *humano, int turno) {
 
     printf("[IA] ARGUS: La IA ha reemplazado tu %s por un %s! WHAAAAT?\n", nombreViejo, nombreNuevo);
 
-    // Sobreescribir inventario del humano
+    // Sobreescribir inventario
     strcpy(humano->inventario[slotObjetivo].nombre, nombreNuevo);
     humano->inventario[slotObjetivo].nivel = idA_Recuperar; // Asignamos nivel por defecto según ID
     humano->inventario[slotObjetivo].disponible = 1; // El nuevo item llega listo para usar
