@@ -257,7 +257,7 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
         
 		// Marcamos como usado y llamamos al efecto planteadoop
 		disp->disponible = 0; 
-		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
+		// aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACACACACACACACACACAAAAAAAAAAAAA
 
 		// Registro exitoso en el log
 		registerCompleteAction(turno, id_jugador, USE_DEVICE, NONE, 0, 0, 0, 0, 0, NONE, NONE, NONE, 1);

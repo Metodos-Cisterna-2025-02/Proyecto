@@ -115,7 +115,7 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 
 //no se esta usando uwu
 
-void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
+static void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
 	printf("\n[SISTEMA] Abriendo interfaz de dispositivos...\n");
 
 	int opcion;

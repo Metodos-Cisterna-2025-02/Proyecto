@@ -115,7 +115,7 @@ void turnoIA(jugador *ia, jugador *jugador, int metaX, int metaY, int turno) {
 
 
 
-void  seleccionardispositivosIA(dispositivousuario inventarioIA[],dispositivousuario inventarioJugador[],int sorteo) {
+void seleccionardispositivosIA(dispositivousuario inventarioIA[], dispositivousuario inventarioJugador[], int sorteo) {
 	int eleccion1, eleccion2, eleccion3;
 
 	char *nombredispositivos[] = {"Gaius","Quadratus","Hydrus","Phalanx","Argus"};

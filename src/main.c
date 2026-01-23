@@ -73,9 +73,6 @@ int main(int argc, char *argv[]) {
 	player.rendido = 0;
 	player.puedeSubir3 = 0;
 
-	
-	
-
 	jugador ia;
 	ia.x = 0;
 	ia.y = 7;
