@@ -7,25 +7,21 @@ int altura_valida(int escenario[8][8]){
     for(i=0; i<8; i++){
         for(j=0; j<8; j++){
             es_valido = 0;
-            //Mira la diferencia de altura con la casilla de arriba
             if(i>0){
                 diferencia_altura = abs(escenario[i][j] -escenario[i-1][j]);
                 if(diferencia_altura == 1)
                     es_valido = 1;
             }
-            //Mira la diferencia de altura con la casilla de abajo
             if(i<7){
                 diferencia_altura = abs(escenario[i][j] -escenario[i+1][j]);
                 if(diferencia_altura == 1)
                     es_valido = 1;
             }
-            //Mira la diferencia de altura con la casilla izquierda
             if(j>0){
                 diferencia_altura = abs(escenario[i][j] -escenario[i][j-1]);
                 if(diferencia_altura == 1)
                     es_valido = 1;
             }
-            //Mira la diferencia de altura con la casilla derecha
             if(j<7){
                 diferencia_altura = abs(escenario[i][j] -escenario[i][j+1]);
                 if(diferencia_altura == 1)
