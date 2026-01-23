@@ -249,7 +249,8 @@ void activar_dispositivo(int turno, int id_jugador, jugador *sujeto, jugador *ri
 
 	if (ejecutarMinijuego(disp->nivel, id_para_minijuego)) {
 		printf("LOGRADO!!!! Dispositivo %s activado.\n", disp->nombre);
-        
+       
+		//X-X_X-X-X-X-X-XX-X_X-X-X-X-X-X SEGUNDA PARTE IMPORTANTE X-X_X-X-X-X-X-X X-X_X-X-X-X-X-X
 		// Marcamos como usado y llamamos al efecto planteadoop
 		disp->disponible = 0; 
 		aplicar_efecto_dispositivo(sujeto, rival, disp, turno, id_jugador);// FUNCION PANCHOOO ACAAAA
