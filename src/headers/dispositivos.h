@@ -34,22 +34,45 @@ static const char* obtenerNombreDispositivo(int id) {
 /* Este archivo esta reservado para funciones de dispositivos */
 
 void aplicar_efecto_dispositivo(jugador *sujeto, jugador *rival, dispositivousuario *disp, int turno, int id_jugador) {
-	char* nombre = disp->nombre;
-	if (strcmp(nombre, "Gaius") == 0) {
-		usar_Gaius(sujeto, turno);
-	} else if (strcmp(nombre, "Quadratus") == 0) {
-		usar_Quadratus(rival, turno);
-	} else if (strcmp(nombre, "Hydrus") == 0) {
-		usar_Hydrus(rival, turno);
-	} else if (strcmp(nombre, "Phalanx") == 0) {
-		usar_Phalanx(sujeto, turno);
-	} else if (strcmp(nombre, "Argus") == 0) {
-		usar_Argus(sujeto, rival, turno);
-	} else {
-		printf("Dispositivo desconocido. No se aplica ningun efecto.\n");
-	}
+    char *nombre = disp->nombre;
 
-	return;
+    if (id_jugador == 1) { // Usuario
+        if (strcasecmp(nombre, "Gaius") == 0) {
+            usar_Gaius(sujeto, turno);
+        }
+        else if (strcasecmp(nombre, "Quadratus") == 0) {
+            usar_Quadratus(rival, turno);
+        }
+        else if (strcasecmp(nombre, "Hydrus") == 0) {
+            usar_Hydrus(rival, turno);
+        }
+        else if (strcasecmp(nombre, "Phalanx") == 0) {
+            usar_Phalanx(sujeto, turno);
+        }
+        else if (strcasecmp(nombre, "Argus") == 0) {
+            usar_Argus(sujeto, rival, turno);
+        }
+    }
+    else { // IA (id_jugador == 2)
+        if (strcasecmp(nombre, "Gaius") == 0) {
+            usar_Gaius_ia(rival->x, rival->y, 1, turno);
+        }
+        else if (strcasecmp(nombre, "Quadratus") == 0) {
+            usar_Quadratus_ia(rival, turno);
+        }
+        else if (strcasecmp(nombre, "Hydrus") == 0) {
+            usar_Hydrus_ia(rival, turno);
+        }
+        else if (strcasecmp(nombre, "Phalanx") == 0) {
+            // Intenta escalar adyacente
+            if (usar_Phalanx_ia(sujeto, sujeto->x + 1, sujeto->y, turno) == 0) {
+                usar_Phalanx_ia(sujeto, sujeto->x, sujeto->y - 1, turno);
+            }
+        }
+        else if (strcasecmp(nombre, "Argus") == 0) {
+            usar_Argus_ia(sujeto, rival, turno);
+        }
+    }
 }
 	
 
