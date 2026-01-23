@@ -6,7 +6,9 @@
 #include <string.h>
 #include <math.h>
 
+
 /* Map related declarations */
+
 #define MAX_VERTICAL 32
 #define MAX_HORIZONTAL 32
 #define MAX_HEIGHT 5
@@ -14,21 +16,53 @@
 #define MAP_TEST "maps/map_test.txt"
 #define MAP_TEST_SIZE 8
 
+
+/* Interface related declarations */
+
+#define INTERFACE_FILE "interface/interface.txt"
+#define HEIGHT0 "/media/height0.png"
+#define HEIGHT1 "/media/height1.png"
+#define HEIGHT2 "/media/height2.png"
+#define HEIGHT3 "/media/height3.png"
+#define HEIGHT4 "/media/height4.png"
+#define HEIGHT5 "/media/height5.png"
+#define OUT_OF_BOUNDS "/media/out_of_bounds.png"
+#define PLAYER_ICON "/media/protoman.png"
+#define BOT_ICON "/media/rockman.png"
+#define MAX_LINE_LENGTH 256
+
+
 /* Map related variables */
+
 static FILE* mapFile;
 static int* map[MAX_VERTICAL];
 static int mapLoaded = 0;
 static char buffer[8];
 
+
+/* Interface related variables */
+
+static FILE* interfaceFile;
+static int interfaceLoaded = 0;
+static char buffer[MAX_LINE_LENGTH];
+
+
 /* Map related function prototypes */
+
 static void readMap();
 int** writeMap(int x, int y, int value);
 int** getMap();
-void freeMap(int** map);
+void freeMap();
 void printMap();
 
 
-/* Maps related functions */
+/* Interface related function prototypes */
+
+static void readInterface();
+static void updateInterface(int x, int y, int h);
+
+
+/* Definiciones de Funciones de Mapa */
 
 /* Lee el archivo del mapa y lo guarda como una matriz de enteros */
 static void readMap() {
@@ -43,7 +77,7 @@ static void readMap() {
 	}
 
 	for (i = 0; i < MAP_TEST_SIZE; i++) {
-        map[i] = (int*) calloc(MAX_HORIZONTAL, __SIZEOF_INT__);
+	map[i] = (int*) calloc(MAX_HORIZONTAL, sizeof(int));
 		if (!map[i]) {
 			perror("Error al alocar memoria para fila");
 			fclose(mapFile);
@@ -65,12 +99,12 @@ static void readMap() {
 	fclose(mapFile);
 }
 
-/* Retorna el mapa como una matriz de NxN enteros */
+/* Retorna el mapa como una matriz de NxM enteros */
 int** getMap() {
-    if (!mapLoaded)
-        readMap();
-    
-    return map;
+	if (!mapLoaded)
+		readMap();
+
+	return map;
 }
 
 /* Escribe un valor de altura en la posicion (X, Y) en el mapa */
@@ -106,12 +140,32 @@ void printMap() {
 	}
 }
 
-// liberar memoria al final del juego
-void freeMap(int** map) {
-    for(int i = 0; i < MAP_TEST_SIZE; i++) {
-        free(map[i]);
-    }
-    free(map);
+/* liberar memoria al final del juego */ 
+void freeMap() {
+	free(map);
+}
+
+/* Definiciones de Funciones de Interfaz */
+
+/* Lee el archivo de la interfaz */
+static void readInterface() {
+	interfaceFile = fopen(INTERFACE_FILE, "r");
+
+	if (!interfaceFile) {
+		perror("Error al abrir el archivo de la interfaz");
+		return;
+	}
+
+	interfaceLoaded = 1;
+}
+
+/* Actualiza la interfaz en la posicion (X, Y, H) */
+void updateInterface(int x, int y, int h) {
+	if (!interfaceLoaded)
+		readInterface();
+
+	
+
 }
 
 #endif

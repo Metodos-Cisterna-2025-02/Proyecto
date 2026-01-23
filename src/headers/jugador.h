@@ -3,29 +3,35 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "interfaz.h" // Necesario para dispositivousuario
-#include "log.h"     // Necesario para el registro de acciones
+#include "interfaz.h"
+#include "log.h"
+#include "dispositivos.h"
 
-/* 1. Definimos la estructura PRIMERO */
+
 typedef struct {
 	int x;
 	int y;
 	int h;
-	dispositivousuario inventario[3]; // Nombre corregido
+	dispositivousuario inventario[3];
 	int bloqueado;
 	int rendido;
-	int puedeSubir3; 
+	int puedeSubir3;
 } jugador;
 
-/* 2. AHORA incluimos dispositivos.h (así ya sabrá qué es un jugador) */
-#include "dispositivos.h"
+int** mapa;
+
 /* Prototipos de funciones */
-void turno_jugador(jugador *j, jugador *oponente, int **mapa);
-static int mover_jugador(jugador *j, char direccion, int **mapa);
-static int es_movimiento_valido(jugador *j, int nx, int ny, int **mapa);
 
+void turno_jugador(jugador *j, jugador *oponente, int turno);
+static int mover_jugador(jugador *j, char direccion);
+static int es_movimiento_valido(jugador *j, int nx, int ny);
 
-static int es_movimiento_valido(jugador *j, int nx, int ny, int **mapa) {
+/* Definiciones de funciones */
+
+static int es_movimiento_valido(jugador *j, int nx, int ny) {
+	if (!mapa)
+		mapa = getMap();
+
 	if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8)
 		return 0;
 
@@ -33,18 +39,20 @@ static int es_movimiento_valido(jugador *j, int nx, int ny, int **mapa) {
 	int h_nueva = mapa[ny][nx];
 	int diferencia = abs(h_nueva - h_actual);
 
-	if (j->puedeSubir3) {
-		if (diferencia > 3)
-			return 0;
-	} else {
-		if (diferencia > 2)
-			return 0;
-	}
+	if (j->puedeSubir3)
+		if (h_nueva - h_actual <= 3)
+			return 1;
+
+	if (diferencia > 2)
+		return 0;
 
 	return 1;
 }
 
-static int mover_jugador(jugador *j, char direccion, int **mapa) {
+static int mover_jugador(jugador *j, char direccion) {
+	if (!mapa)
+		mapa = getMap();
+
 	int nx = j->x;
 	int ny = j->y;
 
@@ -69,7 +77,7 @@ static int mover_jugador(jugador *j, char direccion, int **mapa) {
 	else
 		return 0;
 
-	if (es_movimiento_valido(j, nx, ny, mapa)) {
+	if (es_movimiento_valido(j, nx, ny)) {
 		j->x = nx;
 		j->y = ny;
 		registerSimpleAction(-1, 1, mov, nx, ny, 1);
@@ -79,29 +87,32 @@ static int mover_jugador(jugador *j, char direccion, int **mapa) {
 	return 0;
 }
 
-void turno_jugador(jugador *j, jugador *oponente, int **mapa) {
+void turno_jugador(jugador *j, jugador *oponente, int turno) {
+	if (!mapa)
+		mapa = getMap();
+
 	int turnoTerminado = 0;
 	int yaUsoDispositivo = 0;
 	int opcion;
 	char direccion;
-	int turno = 1; 
 
 	while (!turnoTerminado && !j->rendido) {
 		opcion = mostrarmenuturno(turno, yaUsoDispositivo);
 
-		if (opcion == 1) { 
-			if (j->bloqueado) {
+		if (opcion == 1) {
+			if (j->bloqueado)
 				turnoTerminado = 1;
-			} else {
+			else {
 				direccion = pedirmovimiento(turno);
-				if (mover_jugador(j, direccion, mapa)) {
+				if (mover_jugador(j, direccion))
 					turnoTerminado = 1;
-				}
 			}
-		} else if (opcion == 2) { 
-			usardispositivojugador(j, oponente); // Ahora sí la reconocerá
+		}
+		else if (opcion == 2) {
+			usardispositivojugador(turno, j, oponente);
 			yaUsoDispositivo = 1;
-		} else if (opcion == 3) { 
+		}
+		else if (opcion == 3) {
 			registerSimpleAction(turno, 1, SURRENDER, 0, 0, 1);
 			j->rendido = 1;
 			turnoTerminado = 1;

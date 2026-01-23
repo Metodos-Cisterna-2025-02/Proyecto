@@ -8,12 +8,12 @@
 
 // Tipos de dispositivos
 typedef enum {
-	NONE = 0,       // Sin dispositivo
-	GAIUS = 1,      // Cambio de altura en mapa
-	QUADRATUS = 2,  // Bloquear dispositivo enemigo
-	HYDRUS = 3,     // Congelación de jugador
-	PHALANX = 4,    // Subir hasta 3 niveles de altura hacia arriba
-	ARGUS = 5       // Intercambio de dispositivos
+	NONE = 0,       // 0: Sin dispositivo
+	GAIUS = 1,      // G: Cambio de altura en mapa
+	QUADRATUS = 2,  // Q: Bloquear dispositivo enemigo
+	HYDRUS = 3,     // H: Congelación de jugador
+	PHALANX = 4,    // P: Subir hasta 3 niveles de altura hacia arriba
+	ARGUS = 5       // A: Intercambio de dispositivos
 } DeviceType;
 
 // Tipos de acciones
@@ -105,9 +105,13 @@ static void createLogFile() {
 // "6.J2:X" = Turno 6, Jugador 2, Rendición
 static char* actionToNotation(Action *action) {
 	static char notation[50];
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
 	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X'};
 	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
+
+	sprintf(notation, "[%02d:%02d:%02d] ", t->tm_hour, t->tm_min, t->tm_sec);
 	
 	// Verificar si es un uso de dispositivo
 	if (action->actionType == USE_DEVICE) {
