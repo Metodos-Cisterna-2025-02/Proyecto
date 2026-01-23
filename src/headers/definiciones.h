@@ -108,7 +108,7 @@ struct pos {
 };
 
 /* ==================== PROTOTIPOS DE ESCENARIO.H ==================== */
-void generar_escenario(int escenario[8][8]);
+void generar_escenario(int** escenario);
 void coordenadas_inicio(int *x, int *y, int x_meta, int y_meta);
 
 /* ==================== PROTOTIPOS DE SEARCH.H ==================== */
@@ -121,6 +121,8 @@ int posGetH(struct pos target);
 /* ==================== PROTOTIPOS DE IO.H ==================== */
 int** writeMap(int x, int y, int value);
 int** getMap();
+void createMap(int **mapa);
+void setMapData(int **mapa);
 void freeMap();
 void printMap();
 void initializeInterface(int xPlayer, int yPlayer, int xAI, int yAI, int xGoal, int yGoal);

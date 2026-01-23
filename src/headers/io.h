@@ -93,6 +93,15 @@ int** writeMap(int x, int y, int value) {
 	return map;
 }
 
+/* Permite reutilizar un mapa generado externamente sin leer de archivo */
+void setMapData(int **mapa) {
+	if (!mapa)
+		return;
+	for (int i = 0; i < MAP_TEST_SIZE; i++)
+		map[i] = mapa[i];
+	mapLoaded = 1;
+}
+
 /* Imprime el mapa a la consola */
 void printMap() {
 	if (!mapLoaded)
@@ -113,6 +122,44 @@ void freeMap() {
 		for (int i = 0; i < MAP_TEST_SIZE; i++)
 			free(map[i]);
 	mapLoaded = 0;
+}
+
+/* Guarda un mapa generado en un archivo con formato map_YYYYMMDD_HHMMSS.txt */
+void createMap(int **mapa) {
+	if (!mapa) {
+		printf("Error: Mapa nulo al intentar guardarlo.\n");
+		return;
+	}
+
+	time_t t = time(NULL);
+	struct tm *date = localtime(&t);
+	char mapFilename[64];
+	
+	/* Formato: maps/map_YYYYMMDD_HHMMSS.txt */
+	snprintf(mapFilename, sizeof(mapFilename), "maps/map_%04d%02d%02d_%02d%02d%02d.txt",
+			 date->tm_year + 1900, date->tm_mon + 1, date->tm_mday,
+			 date->tm_hour, date->tm_min, date->tm_sec);
+	
+	FILE *mapFile = fopen(mapFilename, "w");
+	
+	if (!mapFile) {
+		perror("Error al crear archivo de mapa");
+		return;
+	}
+
+	/* Escribir el mapa en formato de matriz */
+	for (int i = 0; i < MAP_TEST_SIZE; i++) {
+		for (int j = 0; j < MAP_TEST_SIZE; j++) {
+			fprintf(mapFile, "%d", mapa[i][j]);
+			/* Agregar espacio de separación si no es el último elemento */
+			if (j < MAP_TEST_SIZE - 1)
+				fprintf(mapFile, " ");
+		}
+		fprintf(mapFile, "\n");
+	}
+
+	fclose(mapFile);
+	// printf("Mapa guardado en: %s\n", mapFilename);
 }
 
 
@@ -357,4 +404,4 @@ void updateInterfaceAI(int xOld, int yOld, int hOld, int xAI, int yAI) {
 	regenerateInterface(currentPlayerX, currentPlayerY, currentAIX, currentAIY);
 }
 
-#endif
+#endif /* IO_H */

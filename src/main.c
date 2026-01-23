@@ -11,6 +11,7 @@
 #include "headers/log.h"
 #include "headers/dispositivos.h"
 #include "headers/minijuegos.h"
+#include "headers/escenario.h"
 
 int** mapa;
 
@@ -54,17 +55,23 @@ void printMapWithPlayers(jugador *j, jugador *ia, int metaX, int metaY) {
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
 
-	if (!mapa)
-		mapa = getMap();
+	// Crear mapa dinámico sin leer del archivo
+	if (!mapa) {
+		mapa = (int**)malloc(MAP_TEST_SIZE * sizeof(int*));
+		for (int i = 0; i < MAP_TEST_SIZE; i++) {
+			mapa[i] = (int*)malloc(MAP_TEST_SIZE * sizeof(int));
+		}
+	}
 
 	if (mapa == NULL) {
-		printf("Error: No se pudo cargar el mapa.\n");
+		printf("Error: No se pudo asignar memoria para el mapa.\n");
 		return 1;
 	}
 
 	int metaX = 7;
 	int metaY = 7;
 
+	// Coordenadas inicialess por defecto
 	jugador player;
 	player.x = 0;
 	player.y = 0;
@@ -81,9 +88,47 @@ int main(int argc, char *argv[]) {
 	ia.rendido = 0;
 	ia.puedeSubir3 = 0;
 
+	// Generar un escenario aleatorio hasta que sea válido
+	while(altura_valida(mapa) == 0) {
+		generar_escenario(mapa);
+	}
+
+	// Guardar el mapa generado en un archivo
+	createMap(mapa);
+	// Sincronizar el mapa generado con la interfaz
+	setMapData(mapa);
+
+    	// Se genera las coordenadas de la meta
+ 	metaX = rand()%8;
+	metaY = rand()%8;
+	int x_jugador, y_jugador, x_ia = 0, y_ia = 0;
+
+	// Genera las coordenadas de inicio del jugador
+	coordenadas_inicio(&x_jugador, &y_jugador, metaX, metaY);
+
+	// Genera las coordenadas de inicio de la IA
+	// Si las coordenadas de ambos son iguales, cambia la posicion de la IA
+	coordenadas_inicio(&x_ia, &y_ia, metaX, metaY);
+	while(x_ia == x_jugador && y_ia == y_jugador) {
+		coordenadas_inicio(&x_ia, &y_ia, metaX, metaY);
+	}
+	
+	// Validar que haya al menos 4 casillas de distancia entre jugadores
+	while((abs(x_jugador - x_ia) + abs(y_jugador - y_ia)) < 4) {
+		coordenadas_inicio(&x_ia, &y_ia, metaX, metaY);
+	}
+
+	// Actualizar coordenadas
+	player.x = x_jugador;
+	player.y = y_jugador;
+	player.h = mapa[y_jugador][x_jugador];
+
+	ia.x = x_ia;
+	ia.y = y_ia;
+	ia.h = mapa[y_ia][x_ia];
+
 	// Inicializar la interfaz gráfica con posiciones iniciales y meta
 	initializeInterface(player.x, player.y, ia.x, ia.y, metaX, metaY);
-	
 
 	printf("--- BIENVENIDO AL PROYECTO DE PROGRAMACION ---\n");
 	
@@ -154,7 +199,7 @@ int main(int argc, char *argv[]) {
 		turno++;
 	}
 
-	freeMap(mapa);
+	freeMap();
 	printf("\nJuego terminado.\n");
 
 	return 0;

@@ -4,7 +4,7 @@
 #include "definiciones.h"
 
 /* Definiciones de funciones */
-int altura_valida(int escenario[8][8]){
+int altura_valida(int** escenario){
     int i, j, diferencia_altura = 0, es_valido;
     for(i=0; i<8; i++){
         for(j=0; j<8; j++){
@@ -36,7 +36,7 @@ int altura_valida(int escenario[8][8]){
     return 1;
 }
 
-void generar_escenario(int escenario[8][8]){
+void generar_escenario(int** escenario){
     int i, j, referencia;
     for(i=0; i<8; i++){
         for(j=0; j<8; j++){
@@ -89,7 +89,7 @@ void coordenadas_inicio(int *x, int *y, int x_meta, int y_meta){
 				*y = 7;
 			}
 		}
-		int distancia = distanceTo(*x, *y, x_meta, y_meta);
+		int distancia = abs(*x - x_meta) + abs(*y - y_meta);
 		if(distancia >= 4)
 			distancia_valida = 1;
 	}
