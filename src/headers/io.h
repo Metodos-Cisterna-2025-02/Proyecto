@@ -1,34 +1,29 @@
 #ifndef IO_H
 #define IO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-/* Map related declarations */
-#define MAX_VERTICAL 32
-#define MAX_HORIZONTAL 32
-#define MAX_HEIGHT 5
-#define MIN_HEIGHT 0
-#define MAP_TEST "maps/map_test.txt"
-#define MAP_TEST_SIZE 8
+#include "definiciones.h"
 
 /* Map related variables */
+
 static FILE* mapFile;
 static int* map[MAX_VERTICAL];
 static int mapLoaded = 0;
 static char buffer[8];
 
-/* Map related function prototypes */
+
+/* Interface related variables */
+
+static FILE* interfaceFile;
+static int interfaceLoaded = 0;
+static char interfaceBuffer[MAX_LINE_LENGTH];
+
+
+/* Prototipos de funciones estáticas */
 static void readMap();
-int** writeMap(int x, int y, int value);
-int** getMap();
-void freeMap(int** map);
-void printMap();
+static void readInterface();
+static void updateInterface(int x, int y, int h);
 
-
-/* Maps related functions */
+/* Definiciones de Funciones de Mapa */
 
 /* Lee el archivo del mapa y lo guarda como una matriz de enteros */
 static void readMap() {
@@ -43,7 +38,7 @@ static void readMap() {
 	}
 
 	for (i = 0; i < MAP_TEST_SIZE; i++) {
-        map[i] = (int*) calloc(MAX_HORIZONTAL, __SIZEOF_INT__);
+	map[i] = (int*) calloc(MAX_HORIZONTAL, sizeof(int));
 		if (!map[i]) {
 			perror("Error al alocar memoria para fila");
 			fclose(mapFile);
@@ -65,12 +60,12 @@ static void readMap() {
 	fclose(mapFile);
 }
 
-/* Retorna el mapa como una matriz de NxN enteros */
+/* Retorna el mapa como una matriz de NxM enteros */
 int** getMap() {
-    if (!mapLoaded)
-        readMap();
-    
-    return map;
+	if (!mapLoaded)
+		readMap();
+
+	return map;
 }
 
 /* Escribe un valor de altura en la posicion (X, Y) en el mapa */
@@ -106,12 +101,36 @@ void printMap() {
 	}
 }
 
-// liberar memoria al final del juego
-void freeMap(int** map) {
-    for(int i = 0; i < MAP_TEST_SIZE; i++) {
-        free(map[i]);
-    }
-    free(map);
+/* Liberar memoria al final del juego */ 
+void freeMap() {
+	if (mapLoaded)
+		for (int i = 0; i < MAP_TEST_SIZE; i++)
+			free(map[i]);
+	mapLoaded = 0;
+}
+
+
+/* Definiciones de Funciones de Interfaz */
+
+/* Lee el archivo de la interfaz */
+static void readInterface() {
+	interfaceFile = fopen(INTERFACE_FILE, "r");
+
+	if (!interfaceFile) {
+		perror("Error al abrir el archivo de la interfaz");
+		return;
+	}
+
+	interfaceLoaded = 1;
+}
+
+/* Actualiza la interfaz en la posicion (X, Y, H) */
+void updateInterface(int x, int y, int h) {
+	if (!interfaceLoaded)
+		readInterface();
+
+	
+
 }
 
 #endif

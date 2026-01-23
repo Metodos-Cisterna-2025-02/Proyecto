@@ -1,71 +1,9 @@
 #ifndef ACTION_LOG_H
 #define ACTION_LOG_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
-// Tipos de dispositivos
-typedef enum {
-	NONE = 0,       // Sin dispositivo
-	GAIUS = 1,      // Cambio de altura en mapa
-	QUADRATUS = 2,  // Bloquear dispositivo enemigo
-	HYDRUS = 3,     // Congelación de jugador
-	PHALANX = 4,    // Subir hasta 3 niveles de altura hacia arriba
-	ARGUS = 5       // Intercambio de dispositivos
-} DeviceType;
-
-// Tipos de acciones
-typedef enum {
-	COIN_FLIP = 0,     // C: Sorteo de moneda (cara/sello)
-	SELECT_DEVICE = 1, // S: Selección de dispositivo (pre-juego)
-	MOVE_UP = 2,       // N: Movimiento hacia arriba
-	MOVE_DOWN = 3,     // S: Movimiento hacia abajo
-	MOVE_LEFT = 4,     // W: Movimiento hacia la izquierda
-	MOVE_RIGHT = 5,    // E: Movimiento hacia la derecha
-	USE_DEVICE = 6,    // U: Uso de dispositivo
-	SURRENDER = 7,     // X: Rendirse
-} ActionType;
-
-// Estructura para registrar efectos especiales
-typedef struct {
-	int turn;                 // Número del turno
-	int player;               // 1 (jugador) o 2 (IA)
-	ActionType actionType;    // Tipo de acción
-	DeviceType device;        // Dispositivo usado (si aplica)
-	int targetX;              // Coordenada X afectada (si aplica)
-	int targetY;              // Coordenada Y afectada (si aplica)
-	int previousValue;        // Altura anterior (para cambios de altura)
-	int newValue;             // Altura nueva (para cambios de altura)
-	int frozenTurns;          // Turnos restantes congelado (si aplica)
-	DeviceType blockedDevice; // Dispositivo bloqueado (Quadratus)
-	DeviceType swapDevice1;   // Primer dispositivo intercambiado (Argus)
-	DeviceType swapDevice2;   // Segundo dispositivo intercambiado (Argus)
-	int coinChoice;           // Elección del jugador: 1=Cara, 2=Sello
-	int coinResult;           // Resultado del sorteo: 1=Cara, 2=Sello
-	DeviceType selectedDevice;// Dispositivo seleccionado (pre-juego)
-	int selectionOrder;       // Orden de selección: 1, 2 o 3
-	int successful;           // 1: exitoso, 0: fallido
-	time_t timestamp;         // Timestamp de la acción
-} Action;
+#include "definiciones.h"
 
 static FILE* logFile;
-
-// prototipos de funciones
-static void createLogFile();
-static char* actionToNotation(Action *action);
-void registerCompleteAction(int turn, int player, ActionType actionType,
-                                                        DeviceType device, int x, int y,
-                                                        int prevValue, int newVal, int turns,
-                                                        DeviceType blocked, DeviceType swap1, DeviceType swap2,
-                                                        int successful);
-void registerSimpleAction(int turn, int player, ActionType actionType,
-                                                 int x, int y, int successful);
-void registerCoinFlip(int player, int choice, int result);
-void registerDeviceSelection(int player, DeviceType device, int order);
-
-
 
 /* Crea un archivo de log con formato game_YYYYMMDD_HHMMSS.log */
 static void createLogFile() {
@@ -105,9 +43,13 @@ static void createLogFile() {
 // "6.J2:X" = Turno 6, Jugador 2, Rendición
 static char* actionToNotation(Action *action) {
 	static char notation[50];
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
 	char typeChar[] = {'C', 'D', 'N', 'S', 'W', 'E', 'U', 'X'};
 	char deviceChar[] = {'G', 'Q', 'H', 'P', 'A'};
 	char result = action->successful ? '+' : '-';
+
+	sprintf(notation, "[%02d:%02d:%02d] ", t->tm_hour, t->tm_min, t->tm_sec);
 	
 	// Verificar si es un uso de dispositivo
 	if (action->actionType == USE_DEVICE) {
