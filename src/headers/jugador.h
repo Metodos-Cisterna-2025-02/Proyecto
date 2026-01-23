@@ -96,8 +96,12 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 			}
 		}
 		else if (opcion == 2) {
-			usardispositivojugador(turno, j, oponente);
-			yaUsoDispositivo = 1;
+			if (yaUsoDispositivo) {
+				printf("Ya has usado un dispositivo este turno.\n");
+			} else {
+				activar_dispositivo(turno, 1, j, oponente);
+				yaUsoDispositivo = 1;
+			}
 		}
 		else if (opcion == 3) {
 			registerSimpleAction(turno, 1, SURRENDER, 0, 0, 1);
@@ -107,8 +111,11 @@ void turno_jugador(jugador *j, jugador *oponente, int turno) {
 	}
 	if (j->bloqueado) j->bloqueado = 0;
 }
+ 
 
-void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
+//no se esta usando uwu
+
+static void usardispositivojugador(int turno, jugador *j, jugador *oponente) {
 	printf("\n[SISTEMA] Abriendo interfaz de dispositivos...\n");
 
 	int opcion;
